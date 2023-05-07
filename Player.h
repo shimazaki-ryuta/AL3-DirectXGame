@@ -5,9 +5,16 @@
 #include "Input.h"
 #include "PlayerBullet.h"
 
+#include <list>
 
 class Player {
 public:
+	/// <summary>
+	/// デストラクタ
+	/// </summary>
+	~Player();
+
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -29,6 +36,7 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(ViewProjection&);
 
+
 private:
 	WorldTransform worldTransForm_;
 	Model* model_ = nullptr;
@@ -36,4 +44,6 @@ private:
 
 	Input* input_ = nullptr;
 	PlayerBullet* bullet_ = nullptr;
+
+	std::list<PlayerBullet*> bullets_;
 };

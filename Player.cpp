@@ -5,6 +5,14 @@
 #include"VectorFunction.h"
 #include "ImGuiManager.h"
 
+Player::~Player() {
+	// Bulletの解放
+	// delete bullet_;
+	for (PlayerBullet* bullet : bullets_) 
+	{
+		delete bullet;
+	}
+}
 void Player::Initialize(Model* model,uint32_t textureHandle) { 
 	assert(model);
 	this->model_ = model;
@@ -53,9 +61,9 @@ void Player::Update()
 	//攻撃処理
 	Attack();
 	//弾更新
-	if (bullet_)
+	for (PlayerBullet* bullet : bullets_)
 	{
-		bullet_->Update();
+		bullet->Update();
 	}
 
 	//キャラクタの座標を表示する
@@ -82,19 +90,29 @@ void Player::Rotate()
 
 void Player::Attack() 
 {
-	if (input_->PushKey(DIK_SPACE)) {
+	if (input_->TriggerKey(DIK_SPACE)) {
+		//弾があれば解放
+		/* if (bullet_)
+		{
+			delete bullet_;
+			bullet_ = nullptr;
+		}*/
+		
+		//弾を生成
 		PlayerBullet* newBullet = new PlayerBullet();
 		newBullet->Initialize(model_,worldTransForm_.translation_);
 
-		bullet_ = newBullet;
+		//bullet_ = newBullet;
+		bullets_.push_back(newBullet);
 	}
 }
+
 void Player::Draw(ViewProjection& viewProjection) 
 { 
 	model_->Draw(worldTransForm_,viewProjection,textureHandle_);
 
-	if (bullet_)
+	for (PlayerBullet* bullet : bullets_) 
 	{
-		bullet_->Draw(viewProjection);
+		bullet->Draw(viewProjection);
 	}
 }
