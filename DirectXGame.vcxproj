@@ -110,9 +110,12 @@
     <ClCompile Include="base\DirectXCommon.cpp" />
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MatrixFunction.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PlayerBullet.cpp" />
     <ClCompile Include="scene\GameScene.cpp" />
     <ClCompile Include="VectorFunction.cpp" />
+    <ClCompile Include="WorldTransformEx.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="2d\ImGuiManager.h" />
@@ -145,6 +148,7 @@
     <ClInclude Include="Matrix.h" />
     <ClInclude Include="MatrxFunction.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PlayerBullet.h" />
     <ClInclude Include="scene\GameScene.h" />
     <ClInclude Include="VectorFunction.h" />
   </ItemGroup>

@@ -1,48 +1,31 @@
 #pragma once
 #include "matrix.h"
 #include <Matrix4x4.h>
+#include <Vector3.h>
 #include <assert.h>
 #include <cmath>
 #include <math.h>
-#include <Vector3.h>
-
-
+/*
+template<typename Matrix4x4>
 Matrix4x4 Add(Matrix4x4 matrix1, Matrix4x4 matrix2);
-
+template<typename Matrix4x4>
 Matrix4x4 Subtract(Matrix4x4 matrix1, Matrix4x4 matrix2);
-
+template<typename Matrix4x4>
 Matrix4x4 Multiply(Matrix4x4 matrix1, Matrix4x4 matrix2);
-
+template<typename Matrix4x4>
 Matrix4x4 Inverse(Matrix4x4 matrix);
-
+template<typename Matrix4x4>
 Matrix4x4 Transpose(Matrix4x4 matrix);
-
+template<typename Matrix4x4>
 Matrix4x4 Scalar(double k, Matrix4x4 matrix);
-
-Matrix4x4 MakeIdentity4x4();
-// アフィン変換関係
-
-Matrix4x4 MakeTranslateMatrix(const Vector3& translate);
-
-Matrix4x4 MakeScaleMatrix(const Vector3& scale);
-
-Vector3 Transform(const Vector3& vector, const Matrix4x4& matrix);
-
-Matrix4x4 MakeRotateXMatrix(float radian);
-Matrix4x4 MakeRotateYMatrix(float radian);
-Matrix4x4 MakeRotateZMatrix(float radian);
-
-Matrix4x4 MakeRotateMatrix(const Vector3& rotate);
-
-Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
-//void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix);
-
-/* template<typename MatrixSize> int ColumnSize(MatrixSize m) {
-	return sizeof(m.m[0]) / sizeof(int);
-}
-template<typename MatrixSize> int RowSize(MatrixSize m) { return sizeof(m.m) / sizeof(m.m[0]); }
-template<typename MatrixSize> MatrixSize Add(MatrixSize m1, MatrixSize m2) {
-	MatrixSize result;
+void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix);
+*/
+int ColumnSize(Matrix4x4 m) { return sizeof(m.m[0]) / sizeof(int); }
+int ColumnSize(Matrix3x3 m) { return sizeof(m.m[0]) / sizeof(int); }
+int ColumnSize(Matrix2x2 m) { return sizeof(m.m[0]) / sizeof(int); }
+int RowSize(Matrix4x4 m) { return sizeof(m.m) / sizeof(m.m[0]); }
+Matrix4x4 Add(Matrix4x4 m1, Matrix4x4 m2) {
+	Matrix4x4 result;
 	int size = ColumnSize(m1);
 	for (int row = 0; row < size; row++) {
 		for (int column = 0; column < size; column++) {
@@ -52,8 +35,8 @@ template<typename MatrixSize> MatrixSize Add(MatrixSize m1, MatrixSize m2) {
 	return result;
 }
 
-template<typename MatrixSize> MatrixSize Subtract(MatrixSize m1, MatrixSize m2) {
-	MatrixSize result;
+Matrix4x4 Subtract(Matrix4x4 m1, Matrix4x4 m2) {
+	Matrix4x4 result;
 	int size = ColumnSize(m1);
 	for (int row = 0; row < size; row++) {
 		for (int column = 0; column < size; column++) {
@@ -63,8 +46,8 @@ template<typename MatrixSize> MatrixSize Subtract(MatrixSize m1, MatrixSize m2) 
 	return result;
 }
 
-template<typename MatrixSize> MatrixSize Multiply(MatrixSize m1, MatrixSize m2) {
-	MatrixSize result;
+Matrix4x4 Multiply(Matrix4x4 m1, Matrix4x4 m2) {
+	Matrix4x4 result;
 	int size = ColumnSize(m1);
 	int m1Column = ColumnSize(m1);
 	int m2Row = RowSize(m2);
@@ -80,12 +63,12 @@ template<typename MatrixSize> MatrixSize Multiply(MatrixSize m1, MatrixSize m2) 
 	return result;
 }
 
-template<typename MatrixSize> MatrixSize Scalar(double k, MatrixSize m) {
-	MatrixSize result;
+Matrix4x4 Scalar(double k, Matrix4x4 m) {
+	Matrix4x4 result;
 	int size = ColumnSize(m);
 	for (int row = 0; row < size; row++) {
 		for (int column = 0; column < size; column++) {
-			result.m[row][column] = k * m.m[row][column];
+			result.m[row][column] = float(k) * m.m[row][column];
 		}
 	}
 	return result;
@@ -116,7 +99,22 @@ auto CofactorExpansion(Matrix3x3 m) {
 		// result[i] = Scalar(k, result[i]);
 		ans += k * CofactorExpansion(result[i]);
 	}
-	
+	/*ans = result[0];
+	for (int i = 1; i < size; i++)
+	{
+	    ans = Add(ans, result[i]);
+	}
+
+	if (size == 2)
+	{
+	    //return ans;
+	}
+	for (int i = 0; i < size; i++)
+	{
+	    ans = Add(ans, result[i]);
+	}
+	return CofactorExpansion(ans);
+	*/
 	return ans;
 }
 
@@ -145,12 +143,27 @@ double CofactorExpansion(Matrix4x4 m) {
 		// result[i] = Scalar(k, result[i]);
 		ans += k * CofactorExpansion(result[i]);
 	}
-	
+	/*ans = result[0];
+	for (int i = 1; i < size; i++)
+	{
+	    ans = Add(ans, result[i]);
+	}
+
+	if (size == 2)
+	{
+	    //return ans;
+	}
+	for (int i = 0; i < size; i++)
+	{
+	    ans = Add(ans, result[i]);
+	}
+	return CofactorExpansion(ans);
+	*/
 	return ans;
 }
 
-template<typename MatrixSize> MatrixSize Transpose(MatrixSize m) {
-	MatrixSize result;
+Matrix4x4 Transpose(Matrix4x4 m) {
+	Matrix4x4 result;
 	int size = ColumnSize(m);
 	for (int row = 0; row < size; row++) {
 		for (int column = 0; column < size; column++) {
@@ -159,6 +172,27 @@ template<typename MatrixSize> MatrixSize Transpose(MatrixSize m) {
 	}
 	return result;
 }
+Matrix3x3 Transpose(Matrix3x3 m) {
+	Matrix3x3 result;
+	int size = ColumnSize(m);
+	for (int row = 0; row < size; row++) {
+		for (int column = 0; column < size; column++) {
+			result.m[row][column] = m.m[column][row];
+		}
+	}
+	return result;
+}
+Matrix2x2 Transpose(Matrix2x2 m) {
+	Matrix2x2 result;
+	int size = ColumnSize(m);
+	for (int row = 0; row < size; row++) {
+		for (int column = 0; column < size; column++) {
+			result.m[row][column] = m.m[column][row];
+		}
+	}
+	return result;
+}
+
 
 Matrix4x4 Adjoint(Matrix4x4 m) {
 	int size = ColumnSize(m);
@@ -248,14 +282,22 @@ Matrix2x2 Adjoint(Matrix2x2 m) {
 	return result;
 }
 
-template<typename MatrixSize> MatrixSize Inverse(MatrixSize m) {
+Matrix4x4 Inverse(Matrix4x4 m) {
 	int size = ColumnSize(m);
-	MatrixSize result;
+	Matrix4x4 result;
 	Matrix2x2 matrix = {0};
 	double determinant = CofactorExpansion(m);
-	
+	/*if (size>2)
+	{
+	    matrix = CofactorExpansion(m);
+	    determinant = (matrix.m[0][0] * matrix.m[1][1] - matrix.m[0][1] * matrix.m[1][0]);
+	}
+	else
+	{
+	    determinant = (m.m[0][0] * m.m[1][1] - m.m[0][1] * m.m[1][0]);
+	}*/
 	// double determinant = (matrix.m[0][0] * matrix.m[1][1] - matrix.m[0][1] * matrix.m[1][0]);
-	MatrixSize adjugateMatrix = Adjoint(m);
+	Matrix4x4 adjugateMatrix = Adjoint(m);
 
 	for (int row = 0; row < size; row++) {
 		for (int column = 0; column < size; column++) {
@@ -363,7 +405,7 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	return matrix;
 }
 
-*/ 
-Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2); 
-Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2);
-Matrix4x4 operator+=(Matrix4x4 m1, Matrix4x4 m2);
+Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2) { return Add(m1, m2); }
+
+Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2) { return Subtract(m1, m2); }
+Matrix4x4 operator+=(Matrix4x4 m1, Matrix4x4 m2) { return Add(m1, m2); }
