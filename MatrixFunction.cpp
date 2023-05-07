@@ -405,6 +405,24 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	return matrix;
 }
 
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m)
+{
+	Vector3 transform;
+	float transformMatrix[3];
+	float matrix1x3[3] = {v.x, v.y,v.z };
+	for (int column = 0; column < 3; column++) {
+		transformMatrix[column] = 0.0f;
+		for (int i = 0; i < 3; i++) {
+			transformMatrix[column] += matrix1x3[i] * m.m[i][column];
+		}
+	}
+	transform.x = transformMatrix[0];
+	transform.y = transformMatrix[1];
+	transform.z = transformMatrix[2];
+	return transform;
+}
+
+
 Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2) { return Add(m1, m2); }
 
 Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2) { return Subtract(m1, m2); }

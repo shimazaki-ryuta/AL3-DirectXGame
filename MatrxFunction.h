@@ -35,6 +35,9 @@ Matrix4x4 MakeRotateZMatrix(float radian);
 Matrix4x4 MakeRotateMatrix(const Vector3& rotate);
 
 Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Vector3& translate);
+
+Vector3 TransformNormal(const Vector3& v, const Matrix4x4&m);
+
 //void MatrixScreenPrintf(int x, int y, const Matrix4x4& matrix);
 
 /* template<typename MatrixSize> int ColumnSize(MatrixSize m) {
