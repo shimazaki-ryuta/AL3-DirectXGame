@@ -2,6 +2,7 @@
 #include "VectorFunction.h"
 #include <assert.h>
 #include "MatrxFunction.h"
+#include "Player.h"
 
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	assert(model);
@@ -62,10 +63,15 @@ void Enemy::Update() {
 void Enemy::Fire()
 {
 	// 弾の速度
-	const float kBulletSpeed = -2.0f;
-	Vector3 velocity(0.0f, 0.0f, kBulletSpeed);
+	const float kBulletSpeed = 1.0f;
+	Vector3 velocity;
 
-	//velocity = TransformNormal(velocity, worldTransForm_.matWorld_);
+	Vector3 end = player_->GetWorldPosition();
+	Vector3 start = GetWorldPosition();
+	velocity = end - start;
+	velocity = Nomalize(velocity);
+
+	velocity = Multiply(double(kBulletSpeed),velocity);
 
 	// 弾を生成、初期化
 	std::unique_ptr<EnemyBullet> bullet_;
@@ -82,4 +88,12 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 	for (iterator = bullets_.begin(); iterator != bullets_.end(); iterator++) {
 		(*iterator)->Draw(viewProjection);
 	}
+}
+
+Vector3 Enemy::GetWorldPosition() {
+	Vector3 worldPos;
+	worldPos.x = worldTransForm_.matWorld_.m[3][0];
+	worldPos.y = worldTransForm_.matWorld_.m[3][1];
+	worldPos.z = worldTransForm_.matWorld_.m[3][2];
+	return worldPos;
 }

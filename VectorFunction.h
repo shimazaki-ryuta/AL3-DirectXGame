@@ -8,5 +8,9 @@ float Dot(const Vector3&, const Vector3&);
 float Length(const Vector3&);
 Vector3 Nomalize(const Vector3&);
 
+Vector3 operator+(const Vector3&, const Vector3&);
+Vector3 operator-(const Vector3&, const Vector3&);
+
+
 Vector3 operator+=(Vector3&,Vector3&);
 Vector3 operator-=(const Vector3&, const Vector3&);

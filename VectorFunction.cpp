@@ -37,6 +37,9 @@ Vector3 Nomalize(const Vector3& v) {
 	return Multiply((1.0f / length), v);
 }
 
+Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1,v2); }
+Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }
+
 Vector3 operator+=(Vector3& v1,Vector3& v2) { return v1 = Add(v1,v2); }
 
 Vector3 operator-=(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }

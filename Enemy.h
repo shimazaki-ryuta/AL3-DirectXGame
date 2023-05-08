@@ -10,6 +10,8 @@ enum class Phase {
 	Leave,
 };
 
+class Player;
+
 ///< summary>
 /// 敵
 ///</summary>
@@ -46,6 +48,9 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
 
+	inline void SetPlayer(Player* player) { player_ = player; }
+	Vector3 GetWorldPosition();
+
 private:
 	WorldTransform worldTransForm_;
 	Model* model_ = nullptr;
@@ -62,4 +67,7 @@ private:
 	std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;
 
 	int32_t fireTimer = 0;
+
+	//自キャラ
+	Player* player_ = nullptr;
 };
