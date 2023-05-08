@@ -2,6 +2,7 @@
 #include "TextureManager.h"
 #include "AxisIndicator.h"
 #include <cassert>
+#include <list>
 
 GameScene::GameScene() {}
 
@@ -65,6 +66,8 @@ void GameScene::Update() {
 		enemy_->Update();
 	}
 
+	CheckAllCollisions();
+
 	debugCamera_->Update();
 }
 
@@ -114,5 +117,64 @@ void GameScene::Draw() {
 	// スプライト描画後処理
 	Sprite::PostDraw();
 
+#pragma endregion
+}
+
+void GameScene::CheckAllCollisions() {
+	Vector3 posA, posB;
+
+	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
+	std::list<std::unique_ptr<EnemyBullet>>& enemyBullets = enemy_->GetBullets();
+	std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;
+
+#pragma region 自キャラと敵弾の当たり判定
+	posA = player_->GetWorldPosition();
+	for (iterator = enemyBullets.begin(); iterator != enemyBullets.end(); iterator++) {
+		posB = (*iterator)->GetWorldPosition();
+
+		float distance = float(std::pow(posB.x - posA.x, 2) + std::pow(posB.y - posA.y, 2) +
+		                 std::pow(posB.z - posA.z, 2));
+		
+		if (distance <= std::pow(player_->Radius + (*iterator)->Radius,2))
+		{
+			player_->OnCollision();
+			(*iterator)->OnCollision();
+		}
+	}
+#pragma endregion
+
+#pragma region 自弾と敵キャラの当たり判定
+	posA = enemy_->GetWorldPosition();
+	for (PlayerBullet* bullet : playerBullets) {
+		posB = bullet->GetWorldPosition();
+		
+		float distance = float(
+		    std::pow(posB.x - posA.x, 2) + std::pow(posB.y - posA.y, 2) +
+		    std::pow(posB.z - posA.z, 2));
+
+		if (distance <= std::pow(enemy_->Radius + bullet->Radius, 2)) {
+			enemy_->OnCollision();
+			bullet->OnCollision();
+		}
+	}
+#pragma endregion
+
+#pragma region 自弾と敵弾の当たり判定
+
+	for (iterator = enemyBullets.begin(); iterator != enemyBullets.end(); iterator++) {
+		posA = (*iterator)->GetWorldPosition();
+		for (PlayerBullet* bullet : playerBullets) {
+			posB = bullet->GetWorldPosition();
+
+			float distance = float(
+			    std::pow(posB.x - posA.x, 2) + std::pow(posB.y - posA.y, 2) +
+			    std::pow(posB.z - posA.z, 2));
+
+			if (distance <= std::pow(bullet->Radius + (*iterator)->Radius, 2)) {
+				(*iterator)->OnCollision();
+				bullet->OnCollision();
+			}
+		}
+	}
 #pragma endregion
 }

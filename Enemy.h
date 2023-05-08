@@ -17,6 +17,9 @@ class Player;
 ///</summary>
 class Enemy {
 public:
+	const float Radius = 5.0f;
+
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -50,6 +53,13 @@ public:
 
 	inline void SetPlayer(Player* player) { player_ = player; }
 	Vector3 GetWorldPosition();
+
+	//衝突時に呼び出されるコールバック関数
+	void OnCollision();
+
+	// 弾リストを取得
+	inline std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
+
 
 private:
 	WorldTransform worldTransForm_;

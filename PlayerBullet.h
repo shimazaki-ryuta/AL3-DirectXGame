@@ -9,6 +9,9 @@
 ///</summary>
 class PlayerBullet {
 public:
+
+	const float Radius = 5.0f;
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
@@ -26,6 +29,10 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 
 	inline bool IsDead() const { return isDead_; };
+
+	Vector3 GetWorldPosition();
+	// 衝突時に呼び出されるコールバック関数
+	void OnCollision();
 
 private:
 	WorldTransform worldTransForm_;

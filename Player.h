@@ -9,6 +9,8 @@
 
 class Player {
 public:
+	const float Radius=5.0f;
+
 	/// <summary>
 	/// デストラクタ
 	/// </summary>
@@ -37,6 +39,12 @@ public:
 	void Draw(ViewProjection&);
 
 	Vector3 GetWorldPosition();
+
+	//弾リストを取得
+	inline const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
+
+	// 衝突時に呼び出されるコールバック関数
+	void OnCollision();
 
 private:
 	WorldTransform worldTransForm_;

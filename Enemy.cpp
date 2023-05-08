@@ -39,7 +39,13 @@ void Enemy::Approach() {
 void Enemy::Leave() { worldTransForm_.translation_ += leaveVerocity_; }
 
 void Enemy::Update() {
-	
+	// デスフラグの立った弾を削除
+	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
+		if (bullet->IsDead()) {
+			return true;
+		}
+		return false;
+	});
 
 	switch (phase_) {
 	default:
@@ -96,4 +102,9 @@ Vector3 Enemy::GetWorldPosition() {
 	worldPos.y = worldTransForm_.matWorld_.m[3][1];
 	worldPos.z = worldTransForm_.matWorld_.m[3][2];
 	return worldPos;
+}
+
+void Enemy::OnCollision()
+{
+
 }
