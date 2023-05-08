@@ -3,8 +3,8 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Input.h"
-
-
+#include "EnemyBullet.h"
+#include <list>
 enum class Phase {
 	Approach,
 	Leave,
@@ -27,9 +27,19 @@ public:
 	/// </summary>
 	void Update();
 	
-	/// パターン
+	///フェーズ
 	void Approach();
 	void Leave();
+	//フェーズ初期化
+	void ApproachInitialize();
+	//void Leave();
+
+	/// <summary>
+	/// 弾発射
+	/// </summary>
+	void Fire();
+	
+
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -46,4 +56,10 @@ private:
 	Vector3 leaveVerocity_;
 
 	Phase phase_ = Phase::Approach;
+
+
+	std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;
+
+	int32_t fireTimer = 0;
 };
