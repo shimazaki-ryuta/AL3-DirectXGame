@@ -5,6 +5,10 @@
 #include "Input.h"
 
 
+enum class Phase {
+	Approach,
+	Leave,
+};
 
 ///< summary>
 /// 敵
@@ -22,6 +26,11 @@ public:
 	/// 更新
 	/// </summary>
 	void Update();
+	
+	/// パターン
+	void Approach();
+	void Leave();
+	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション</param>
@@ -33,5 +42,8 @@ private:
 	uint32_t textureHandle_ = 0u;
 	Vector3 velocity_;
 
-	
+	Vector3 approachVerocity_;
+	Vector3 leaveVerocity_;
+
+	Phase phase_ = Phase::Approach;
 };

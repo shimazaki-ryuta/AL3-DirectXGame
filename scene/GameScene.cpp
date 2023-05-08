@@ -35,7 +35,7 @@ void GameScene::Initialize() {
 
 	//敵の生成
 	enemy_ = new Enemy();
-	enemy_->Initialize(model_, Vector3(0.0f, 0.0f, 10.0f), Vector3(0.0f, 0.0f, -0.5f));
+	enemy_->Initialize(model_, Vector3(0.0f, 2.0f, 10.0f), Vector3(0.0f, 0.0f, -0.2f));
 
 }
 
