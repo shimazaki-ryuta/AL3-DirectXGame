@@ -12,6 +12,7 @@
 
 #include "Player.h"
 #include "Enemy.h"
+#include "Skydome.h"
 
 /// <summary>
 /// ゲームシーン
@@ -70,6 +71,9 @@ private: // メンバ変数
 	//敵
 	Enemy* enemy_ = nullptr;
 
+	//天球
+	std::unique_ptr<Skydome> skydome_ = nullptr;
+	Model* modelSkydome_ = nullptr;
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
