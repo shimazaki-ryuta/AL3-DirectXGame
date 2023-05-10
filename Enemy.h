@@ -72,6 +72,8 @@ private:
 
 	Phase phase_ = Phase::Approach;
 
+	//void (Enemy::*pFunc)();
+	static void(Enemy::*phaseTable[])();
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;

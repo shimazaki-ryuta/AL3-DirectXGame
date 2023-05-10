@@ -4,6 +4,11 @@
 #include "MatrxFunction.h"
 #include "Player.h"
 
+void (Enemy::*Enemy::phaseTable[])() = {
+	&Enemy::Approach,
+	&Enemy::Leave
+};
+
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	assert(model);
 	model_ = model;
@@ -17,6 +22,7 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 
 	//Fire();
 	ApproachInitialize();
+	//pFunc = &Enemy::Approach;
 }
 void Enemy::ApproachInitialize()
 { 
@@ -46,7 +52,7 @@ void Enemy::Update() {
 		}
 		return false;
 	});
-
+	/*
 	switch (phase_) {
 	default:
 	case Phase::Approach:
@@ -56,6 +62,10 @@ void Enemy::Update() {
 		Leave();
 		break;
 	}
+	*/
+
+	//(this->*pFunc)();
+	(this->*phaseTable[static_cast<size_t>(phase_)])();
 
 	//worldTransForm_.translation_ += velocity_;
 
