@@ -111,6 +111,7 @@
     <ClCompile Include="base\WinApp.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="EnemyBullet.cpp" />
+    <ClCompile Include="EnemyState.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MatrixFunction.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="base\WinApp.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="EnemyBullet.h" />
+    <ClInclude Include="EnemyState.h" />
     <ClInclude Include="input\Input.h" />
     <ClInclude Include="math\Matrix4x4.h" />
     <ClInclude Include="math\Vector2.h" />

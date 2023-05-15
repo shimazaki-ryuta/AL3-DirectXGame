@@ -4,10 +4,10 @@
 #include "MatrxFunction.h"
 #include "Player.h"
 
-void (Enemy::*Enemy::phaseTable[])() = {
+/* void (Enemy::*Enemy::phaseTable[])() = {
 	&Enemy::Approach,
 	&Enemy::Leave
-};
+};*/
 
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	assert(model);
@@ -19,9 +19,10 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	velocity_ = velocity;
 	approachVerocity_ = velocity;
 	leaveVerocity_ = Vector3(-0.1f,0.1f,0.0f);
-
+	state_ = new EnemyStateApproach();
+	state_->Initialize(this);
 	//Fire();
-	ApproachInitialize();
+	//ApproachInitialize();
 	//pFunc = &Enemy::Approach;
 }
 void Enemy::ApproachInitialize()
@@ -65,8 +66,8 @@ void Enemy::Update() {
 	*/
 
 	//(this->*pFunc)();
-	(this->*phaseTable[static_cast<size_t>(phase_)])();
-
+	//(this->*phaseTable[static_cast<size_t>(phase_)])();
+	state_->Update();
 	//worldTransForm_.translation_ += velocity_;
 
 	// 行列を更新
@@ -74,6 +75,14 @@ void Enemy::Update() {
 	for (iterator = bullets_.begin(); iterator != bullets_.end(); iterator++) {
 		(*iterator)->Update();
 	}
+}
+
+void Enemy::ChangeState(BaseEnemyState* state)
+{
+
+	delete state_;
+	state->Initialize(this);
+	state_ = state;
 }
 
 void Enemy::Fire()
@@ -98,6 +107,9 @@ void Enemy::Fire()
 	bullets_.push_back(std::move(bullet_));
 }
 
+void Enemy::Move(const Vector3& velocity) {
+	worldTransForm_.translation_ += velocity;
+}
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransForm_, viewProjection, textureHandle_);

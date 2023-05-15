@@ -4,6 +4,7 @@
 #include "ViewProjection.h"
 #include "Input.h"
 #include "EnemyBullet.h"
+#include "EnemyState.h"
 #include <list>
 enum class Phase {
 	Approach,
@@ -37,13 +38,20 @@ public:
 	void Leave();
 	//フェーズ初期化
 	void ApproachInitialize();
-	//void Leave();
+
+	void ChangeState(BaseEnemyState*);
 
 	/// <summary>
 	/// 弾発射
 	/// </summary>
 	void Fire();
 	
+	/// <summary>
+	/// 移動
+	/// </summary>
+	void Move(const Vector3& velocity);
+	
+
 
 	/// <summary>
 	/// 描画
@@ -53,6 +61,10 @@ public:
 
 	inline void SetPlayer(Player* player) { player_ = player; }
 	Vector3 GetWorldPosition();
+	//inline Vector3 GetPosition() { return worldTransForm_.translation_; };
+	inline Vector3 GetApproachVelocity() { return approachVerocity_; };
+	inline Vector3 GetLeaveVelocity() { return leaveVerocity_; };
+
 
 	//衝突時に呼び出されるコールバック関数
 	void OnCollision();
@@ -73,7 +85,9 @@ private:
 	Phase phase_ = Phase::Approach;
 
 	//void (Enemy::*pFunc)();
-	static void(Enemy::*phaseTable[])();
+	//static void(Enemy::*phaseTable[])();
+
+	BaseEnemyState* state_ = nullptr;
 
 	std::list<std::unique_ptr<EnemyBullet>> bullets_;
 	std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;
