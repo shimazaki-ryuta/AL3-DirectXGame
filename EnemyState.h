@@ -18,7 +18,7 @@ private:
 class EnemyStateApproach : public BaseEnemyState
 {
 public:
-	//EnemyStateApproach(Enemy* enemy);
+	EnemyStateApproach(Enemy* enemy);
 	inline void Initialize(Enemy* enemy) { enemy_ = enemy; };
 	void Update();
 
@@ -29,7 +29,7 @@ private:
 
 class EnemyStateLeave : public BaseEnemyState {
 public:
-	//EnemyStateLeave(Enemy* enemy);
+	EnemyStateLeave(Enemy* enemy);
 	inline void Initialize(Enemy* enemy) { enemy_ = enemy; };
 	void Update();
 

@@ -1,15 +1,16 @@
 #include "EnemyState.h"
 #include "Enemy.h"
 
-/* EnemyStateApproach::EnemyStateApproach(Enemy* enemy) {
+EnemyStateApproach::EnemyStateApproach(Enemy* enemy) {
 	enemy_ = enemy;
-}*/
+}
 
 void EnemyStateApproach::Update()
 {
 	enemy_->Move(enemy_->GetApproachVelocity());
 	if (enemy_->GetWorldPosition().z < 0.0f) {
-		enemy_->ChangeState(new EnemyStateLeave());
+		enemy_->ChangeState(new EnemyStateLeave(enemy_));
+		return;
 	}
 
 	// 発射タイマーカウントダウン
@@ -20,7 +21,7 @@ void EnemyStateApproach::Update()
 	}
 }
 
-//EnemyStateLeave::EnemyStateLeave(Enemy* enemy) { enemy_ = enemy; }
+EnemyStateLeave::EnemyStateLeave(Enemy* enemy) { enemy_ = enemy; }
 
 void EnemyStateLeave::Update()
 { enemy_->Move(enemy_->GetLeaveVelocity()); }

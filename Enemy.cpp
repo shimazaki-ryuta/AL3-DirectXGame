@@ -19,8 +19,8 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	velocity_ = velocity;
 	approachVerocity_ = velocity;
 	leaveVerocity_ = Vector3(-0.1f,0.1f,0.0f);
-	state_ = new EnemyStateApproach();
-	state_->Initialize(this);
+	state_ = new EnemyStateApproach(this);
+	//state_->Initialize(this);
 	//Fire();
 	//ApproachInitialize();
 	//pFunc = &Enemy::Approach;
@@ -120,9 +120,9 @@ void Enemy::Draw(const ViewProjection& viewProjection) {
 
 Vector3 Enemy::GetWorldPosition() {
 	Vector3 worldPos;
-	worldPos.x = worldTransForm_.matWorld_.m[3][0];
-	worldPos.y = worldTransForm_.matWorld_.m[3][1];
-	worldPos.z = worldTransForm_.matWorld_.m[3][2];
+	worldPos.x = worldTransForm_.translation_.x;
+	worldPos.y = worldTransForm_.translation_.y;
+	worldPos.z = worldTransForm_.translation_.z;
 	return worldPos;
 }
 
