@@ -6,6 +6,9 @@
 #include "EnemyBullet.h"
 #include "EnemyState.h"
 #include <list>
+
+#include "TimedCall.h"
+
 enum class Phase {
 	Approach,
 	Leave,
@@ -19,7 +22,7 @@ class Player;
 class Enemy {
 public:
 	const float Radius = 5.0f;
-
+	~Enemy();
 
 	/// <summary>
 	/// 初期化
@@ -47,6 +50,11 @@ public:
 	void Fire();
 	
 	/// <summary>
+	/// 弾を発射しタイマーをリセットする
+	/// </summary>
+	void FireCall();
+
+	/// <summary>
 	/// 移動
 	/// </summary>
 	void Move(const Vector3& velocity);
@@ -64,7 +72,7 @@ public:
 	//inline Vector3 GetPosition() { return worldTransForm_.translation_; };
 	inline Vector3 GetApproachVelocity() { return approachVerocity_; };
 	inline Vector3 GetLeaveVelocity() { return leaveVerocity_; };
-
+	inline std::list<TimedCall*>& GetFireCalls() { return timedCalls_; };
 
 	//衝突時に呼び出されるコールバック関数
 	void OnCollision();
@@ -93,6 +101,8 @@ private:
 	std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;
 
 	int32_t fireTimer = 0;
+
+	std::list<TimedCall*> timedCalls_;
 
 	//自キャラ
 	Player* player_ = nullptr;

@@ -9,6 +9,13 @@
 	&Enemy::Leave
 };*/
 
+Enemy::~Enemy()
+{
+	for (TimedCall* timedCall : timedCalls_) {
+		delete timedCall;
+	}
+}
+
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	assert(model);
 	model_ = model;
@@ -53,6 +60,14 @@ void Enemy::Update() {
 		}
 		return false;
 	});
+
+	//終了したタイマーを削除
+	timedCalls_.remove_if([](TimedCall* timedCall) {
+		if (timedCall->IsFinished()) {
+			return true;
+		}
+		return false;
+	});
 	/*
 	switch (phase_) {
 	default:
@@ -72,9 +87,16 @@ void Enemy::Update() {
 
 	// 行列を更新
 	worldTransForm_.UpdateMatrix();
+
+	//弾を生成(弾の更新より前にやらないとエラーが起きる)
+	for (TimedCall* timedCall : timedCalls_) {
+		timedCall->Update();
+	}
+	//弾の更新
 	for (iterator = bullets_.begin(); iterator != bullets_.end(); iterator++) {
 		(*iterator)->Update();
 	}
+
 }
 
 void Enemy::ChangeState(BaseEnemyState* state)
@@ -105,6 +127,14 @@ void Enemy::Fire()
 
 	//bullet_ = newBullet;
 	bullets_.push_back(std::move(bullet_));
+}
+
+void Enemy::FireCall() 
+{ 
+	Fire();
+
+	 timedCalls_.push_back(
+	    new TimedCall(std::bind(&Enemy::FireCall, this), EnemyBullet::kFireInterval));
 }
 
 void Enemy::Move(const Vector3& velocity) {
