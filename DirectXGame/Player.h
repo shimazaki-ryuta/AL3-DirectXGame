@@ -9,7 +9,7 @@
 
 class Player {
 public:
-	const float Radius=5.0f;
+	const float Radius=1.0f;
 
 	/// <summary>
 	/// デストラクタ

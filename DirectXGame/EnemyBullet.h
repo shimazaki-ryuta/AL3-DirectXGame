@@ -7,12 +7,12 @@
 ///</summary>
 class EnemyBullet {
 public:
-	const float Radius = 5.0f;
+	const float Radius = 1.0f;
 
 	//発射間隔
 	static const int kFireInterval = 60;
 
-	void Initialize(Model* model, const Vector3& position, const Vector3& verocity);
+	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -35,7 +35,7 @@ private:
 	WorldTransform worldTransForm_;
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0u;
-	Vector3 verocity_;
+	Vector3 velocity_;
 
 	// 寿命
 	static const int32_t kLifeTime = 60 * 5;

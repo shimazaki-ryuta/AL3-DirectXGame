@@ -10,7 +10,7 @@
 class PlayerBullet {
 public:
 
-	const float Radius = 5.0f;
+	const float Radius = 1.0f;
 
 	/// <summary>
 	/// 初期化

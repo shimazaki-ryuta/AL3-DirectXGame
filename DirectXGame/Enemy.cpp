@@ -24,8 +24,8 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	// 引数で受け取った初期座標をセット
 	worldTransForm_.translation_ = position;
 	velocity_ = velocity;
-	approachVerocity_ = velocity;
-	leaveVerocity_ = Vector3(-0.1f,0.1f,0.0f);
+	approachvelocity_ = velocity;
+	leavevelocity_ = Vector3(-0.1f,0.1f,0.0f);
 	state_ = new EnemyStateApproach(this);
 	//state_->Initialize(this);
 	//Fire();
@@ -37,7 +37,7 @@ void Enemy::ApproachInitialize()
 	fireTimer = EnemyBullet::kFireInterval; 
 }
 void Enemy::Approach() {
-	worldTransForm_.translation_ += approachVerocity_;
+	worldTransForm_.translation_ += approachvelocity_;
 	if (worldTransForm_.translation_.z < 0.0f) {
 		phase_ = Phase::Leave;
 	}
@@ -50,7 +50,7 @@ void Enemy::Approach() {
 		fireTimer = EnemyBullet::kFireInterval;
 	}
 }
-void Enemy::Leave() { worldTransForm_.translation_ += leaveVerocity_; }
+void Enemy::Leave() { worldTransForm_.translation_ += leavevelocity_; }
 
 void Enemy::Update() {
 	// デスフラグの立った弾を削除

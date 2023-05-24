@@ -21,7 +21,7 @@ class Player;
 ///</summary>
 class Enemy {
 public:
-	const float Radius = 5.0f;
+	const float Radius = 1.0f;
 	~Enemy();
 
 	/// <summary>
@@ -70,8 +70,8 @@ public:
 	inline void SetPlayer(Player* player) { player_ = player; }
 	Vector3 GetWorldPosition();
 	//inline Vector3 GetPosition() { return worldTransForm_.translation_; };
-	inline Vector3 GetApproachVelocity() { return approachVerocity_; };
-	inline Vector3 GetLeaveVelocity() { return leaveVerocity_; };
+	inline Vector3 GetApproachVelocity() { return approachvelocity_; };
+	inline Vector3 GetLeaveVelocity() { return leavevelocity_; };
 	inline std::list<TimedCall*>& GetFireCalls() { return timedCalls_; };
 
 	//衝突時に呼び出されるコールバック関数
@@ -87,8 +87,8 @@ private:
 	uint32_t textureHandle_ = 0u;
 	Vector3 velocity_;
 
-	Vector3 approachVerocity_;
-	Vector3 leaveVerocity_;
+	Vector3 approachvelocity_;
+	Vector3 leavevelocity_;
 
 	Phase phase_ = Phase::Approach;
 
