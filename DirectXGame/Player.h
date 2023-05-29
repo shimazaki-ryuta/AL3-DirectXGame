@@ -20,7 +20,7 @@ public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(Model*,uint32_t);
+	void Initialize(Model*, uint32_t, const Vector3& position);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -39,6 +39,8 @@ public:
 	void Draw(ViewProjection&);
 
 	Vector3 GetWorldPosition();
+
+	inline void SetParent(const WorldTransform* parent) { worldTransForm_.parent_ = parent; };
 
 	//弾リストを取得
 	inline const std::list<PlayerBullet*>& GetBullets() { return bullets_; }

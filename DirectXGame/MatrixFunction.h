@@ -370,3 +370,5 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2); 
 Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2);
 Matrix4x4 operator+=(Matrix4x4 m1, Matrix4x4 m2);
+Matrix4x4 operator-=(Matrix4x4& m1, const Matrix4x4& m2);
+Matrix4x4 operator*=(Matrix4x4& m1, const Matrix4x4& m2);

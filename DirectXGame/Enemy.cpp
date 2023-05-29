@@ -1,7 +1,7 @@
 #include "Enemy.h"
 #include "VectorFunction.h"
 #include <assert.h>
-#include "MatrxFunction.h"
+#include "MatrixFunction.h"
 #include "Player.h"
 
 /* void (Enemy::*Enemy::phaseTable[])() = {

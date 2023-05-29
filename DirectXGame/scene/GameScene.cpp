@@ -12,6 +12,7 @@ GameScene::~GameScene() {
 	delete player_;
 	delete enemy_;
 	delete modelSkydome_;
+	delete railCamera_;
 }
 
 void GameScene::Initialize() {
@@ -32,8 +33,9 @@ void GameScene::Initialize() {
 
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
+	Vector3 playerPosition(0,0,30.0f);
 	player_ = new Player();
-	player_->Initialize(model_,textureHandle_);
+	player_->Initialize(model_,textureHandle_,playerPosition);
 
 	//敵の生成
 	enemy_ = new Enemy();
@@ -44,6 +46,13 @@ void GameScene::Initialize() {
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_.reset(new Skydome);
 	skydome_->Initialize(modelSkydome_,Vector3(0.0f,0.0f,0.0f));
+
+	//レールカメラ
+	railCamera_ = new RailCamera();
+	railCamera_->Initialize(Vector3{0.0f, 0.0f, -10.0f}, Vector3{0.0f, 0.0f, 0.0f});
+
+	//親子関係
+	player_->SetParent(&railCamera_->GetWorldTransform());
 }
 
 void GameScene::Update() {
@@ -61,7 +70,10 @@ void GameScene::Update() {
 	}
 	else
 	{
-		viewProjection_.UpdateMatrix();
+		//viewProjection_.UpdateMatrix();
+		viewProjection_.matView = railCamera_->GetViewProjection().matView;
+		viewProjection_.matProjection = railCamera_->GetViewProjection().matProjection;
+		viewProjection_.TransferMatrix();
 	}
 
 
@@ -77,6 +89,7 @@ void GameScene::Update() {
 	skydome_->Update();
 
 	debugCamera_->Update();
+	railCamera_->Update();
 }
 
 void GameScene::Draw() {

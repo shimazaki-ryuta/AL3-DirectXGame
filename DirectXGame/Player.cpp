@@ -1,7 +1,7 @@
 #include "Player.h"
 #include <cassert>
 #include <algorithm>
-#include"MatrxFunction.h"
+#include"MatrixFunction.h"
 #include"VectorFunction.h"
 #include "ImGuiManager.h"
 
@@ -13,10 +13,11 @@ Player::~Player() {
 		delete bullet;
 	}
 }
-void Player::Initialize(Model* model,uint32_t textureHandle) { 
+void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& position) { 
 	assert(model);
 	this->model_ = model;
 	this->textureHandle_ = textureHandle;
+	worldTransForm_.translation_ = position;
 	worldTransForm_.Initialize();
 	input_ = Input::GetInstance();
 }
@@ -63,10 +64,12 @@ void Player::Update()
 
 
 	//行列更新
-	worldTransForm_.matWorld_ =
-	    MakeAffineMatrix(worldTransForm_.scale_, worldTransForm_.rotation_, worldTransForm_.translation_);
+	//worldTransForm_.matWorld_ =
+	//    MakeAffineMatrix(worldTransForm_.scale_, worldTransForm_.rotation_, worldTransForm_.translation_);
 
-	worldTransForm_.TransferMatrix();
+	//worldTransForm_.TransferMatrix();
+
+	worldTransForm_.UpdateMatrix();
 
 	//攻撃処理
 	Attack();
@@ -116,7 +119,7 @@ void Player::Attack()
 
 		//弾を生成、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_,worldTransForm_.translation_,velocity);
+		newBullet->Initialize(model_, GetWorldPosition(), velocity);
 
 		//bullet_ = newBullet;
 		bullets_.push_back(newBullet);
