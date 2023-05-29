@@ -118,13 +118,13 @@ void Enemy::Fire()
 	velocity = end - start;
 	velocity = Nomalize(velocity);
 
-	velocity = Multiply(double(kBulletSpeed),velocity);
+	velocity = Multiply(float(kBulletSpeed),velocity);
 
 	// 弾を生成、初期化
 	std::unique_ptr<EnemyBullet> bullet_;
 	bullet_.reset(new EnemyBullet());
 	bullet_->Initialize(model_, worldTransForm_.translation_, velocity);
-
+	bullet_->SetPlayer(player_);
 	//bullet_ = newBullet;
 	bullets_.push_back(std::move(bullet_));
 }

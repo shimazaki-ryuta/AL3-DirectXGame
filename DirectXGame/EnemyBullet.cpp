@@ -1,6 +1,7 @@
 #include "EnemyBullet.h"
 #include <assert.h>
 #include "VectorFunction.h"
+#include "Player.h"
 void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	assert(model);
 	model_ = model;
@@ -15,15 +16,28 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 
 	velocity_ = velocity;
 	//解法2
-	//y軸周り角度(θy)
+	//  y軸周り角度(θy)
 	worldTransForm_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
-	Vector3 velocityXY{velocity_.x,0.0f,velocity_.y};
-	float besage = Length(velocityXY);
-	worldTransForm_.rotation_.x = std::atan2(-velocity_.y,besage);
+	Vector3 velocityXZ{velocity_.x, 0.0f, velocity_.z};
+	float besage = Length(velocityXZ);
+	worldTransForm_.rotation_.x = std::atan2(-velocity_.y, besage);
+
 }
 
 void EnemyBullet::Update()
 { 
+	Vector3 toPlayer = player_->GetWorldPosition() - worldTransForm_.translation_;
+
+	float speed = 0.3f;
+
+	velocity_ = Slerp(velocity_,toPlayer,0.05f ) * speed;
+
+	// y軸周り角度(θy)
+	worldTransForm_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
+	Vector3 velocityXZ{velocity_.x, 0.0f, velocity_.z};
+	float besage = Length(velocityXZ);
+	worldTransForm_.rotation_.x = std::atan2(-velocity_.y, besage);
+
 	worldTransForm_.translation_ += velocity_;
 	worldTransForm_.UpdateMatrix();
 

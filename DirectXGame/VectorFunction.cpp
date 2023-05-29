@@ -1,6 +1,7 @@
 #include "VectorFunction.h"
 #include <math.h>
-
+#include <cmath>
+#include <algorithm>
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 v;
 	v.x = v1.x + v2.x;
@@ -37,10 +38,34 @@ Vector3 Nomalize(const Vector3& v) {
 	return Multiply((1.0f / length), v);
 }
 
-Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1,v2); }
-Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }
+Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t)
+{
+	return v1 + Multiply(t,v2-v1);
+}
 
-Vector3 operator+=(Vector3& v1,Vector3& v2) { return v1 = Add(v1,v2); }
-Vector3 operator+=(Vector3& v1,const  Vector3& v2) { return v1 = Add(v1, v2); }
+Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) 
+{
+	Vector3 a = Nomalize(v1), b = Nomalize(v2);
+	float s = (1.0f - t) * Length(a) + t*Length(b);
+	Vector3 e1, e2;
+	e1 = float(1.0f / Length(a)) * a;
+	e2 = float(1.0f / Length(b)) * b;
+
+	float dot = std::clamp(Dot(a, b),0.0f,1.0f);
+	float theta = std::acos(dot/*/( Length(a)*Length(b))*/);
+	if (theta ==0.0f)
+	{
+		return Lerp(a,b,t);
+	}
+	return s*((std::sinf((1.0f-t)*theta)/std::sinf(theta))*a + (std::sinf(t*theta)/std::sinf(theta))*b);
+}
+
+Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
+Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }
+Vector3 operator*(float k, const Vector3& v) { return Multiply(k, v); }
+Vector3 operator*(const Vector3& v, float k) { return Multiply(k, v); }
+
+Vector3 operator+=(Vector3& v1, Vector3& v2) { return v1 = Add(v1, v2); }
+Vector3 operator+=(Vector3& v1, const Vector3& v2) { return v1 = Add(v1, v2); }
 
 Vector3 operator-=(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }

@@ -38,7 +38,7 @@ void GameScene::Initialize() {
 	//敵の生成
 	enemy_ = new Enemy();
 	enemy_->SetPlayer(player_);
-	enemy_->Initialize(model_, Vector3(10.0f, 2.0f, 30.0f), Vector3(0.0f, 0.0f, -0.1f));
+	enemy_->Initialize(model_, Vector3(10.0f, 2.0f, 50.0f), Vector3(0.0f, 0.0f, -0.1f));
 
 	//天球
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
