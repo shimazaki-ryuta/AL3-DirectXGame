@@ -12,7 +12,7 @@ public:
 	const float Radius = 1.0f;
 	const float kSpeed = 1.0f;
 	//発射間隔
-	static const int kFireInterval = 10;
+	static const int kFireInterval = 60;
 
 	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
 	/// <summary>

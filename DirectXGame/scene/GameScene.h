@@ -1,5 +1,7 @@
 #pragma once
 
+#include <sstream>
+
 #include "Audio.h"
 #include "DirectXCommon.h"
 #include "Input.h"
@@ -51,6 +53,28 @@ public: // メンバ関数
 	/// </summary> 
 	void CheckAllCollisions();
 
+	void AddEnemyBullet(std::unique_ptr<EnemyBullet>);
+
+
+	/// <summary>
+	/// 敵発生
+	/// </summary>
+	void EnemyPop(const Vector3&);
+
+
+	/// <summary>
+	/// 敵発生データの読み込み
+	/// </summary>
+	void LoadEnemyPopData();
+
+	/// <summary>
+	/// 敵発生コマンドの更新
+	/// </summary>
+	void UpdateEnemyPopCommands();
+
+
+
+
 private: // メンバ変数
 	DirectXCommon* dxCommon_ = nullptr;
 	Input* input_ = nullptr;
@@ -70,7 +94,13 @@ private: // メンバ変数
 	DebugCamera* debugCamera_ = nullptr;
 
 	//敵
-	Enemy* enemy_ = nullptr;
+	//Enemy* enemy_ = nullptr;
+	std::list<std::unique_ptr<Enemy>> enemys_;
+
+
+	//敵弾
+	std::list<std::unique_ptr<EnemyBullet>> enemyBullets_;
+	//std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;
 
 	//天球
 	std::unique_ptr<Skydome> skydome_ = nullptr;
@@ -78,6 +108,12 @@ private: // メンバ変数
 
 	//レールカメラ
 	RailCamera* railCamera_ = nullptr;
+
+	//敵発生コマンド
+	std::stringstream enemyPopCommands;
+	bool isWait_ = false;
+	int32_t waitTime_;
+
 
 
 	/// <summary>

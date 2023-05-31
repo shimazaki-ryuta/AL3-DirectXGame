@@ -16,6 +16,8 @@ enum class Phase {
 
 class Player;
 
+class GameScene;
+
 ///< summary>
 /// 敵
 ///</summary>
@@ -68,6 +70,7 @@ public:
 	void Draw(const ViewProjection& viewProjection);
 
 	inline void SetPlayer(Player* player) { player_ = player; }
+	inline void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	Vector3 GetWorldPosition();
 	//inline Vector3 GetPosition() { return worldTransForm_.translation_; };
 	inline Vector3 GetApproachVelocity() { return approachvelocity_; };
@@ -77,8 +80,9 @@ public:
 	//衝突時に呼び出されるコールバック関数
 	void OnCollision();
 
+	inline bool IsDead() const { return isDead_; };
 	// 弾リストを取得
-	inline std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
+	//inline std::list<std::unique_ptr<EnemyBullet>>& GetBullets() { return bullets_; }
 
 
 private:
@@ -97,8 +101,8 @@ private:
 
 	BaseEnemyState* state_ = nullptr;
 
-	std::list<std::unique_ptr<EnemyBullet>> bullets_;
-	std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;
+	//std::list<std::unique_ptr<EnemyBullet>> bullets_;
+	//std::list<std::unique_ptr<EnemyBullet>>::iterator iterator;
 
 	int32_t fireTimer = 0;
 
@@ -106,4 +110,8 @@ private:
 
 	//自キャラ
 	Player* player_ = nullptr;
+
+	GameScene* gameScene_;
+
+	bool isDead_ = false;
 };

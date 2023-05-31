@@ -3,6 +3,7 @@
 #include <assert.h>
 #include "MatrixFunction.h"
 #include "Player.h"
+#include "GameScene.h"
 
 /* void (Enemy::*Enemy::phaseTable[])() = {
 	&Enemy::Approach,
@@ -53,14 +54,14 @@ void Enemy::Approach() {
 void Enemy::Leave() { worldTransForm_.translation_ += leavevelocity_; }
 
 void Enemy::Update() {
-	// デスフラグの立った弾を削除
+	/*// デスフラグの立った弾を削除
 	bullets_.remove_if([](std::unique_ptr<EnemyBullet>& bullet) {
 		if (bullet->IsDead()) {
 			return true;
 		}
 		return false;
 	});
-
+	*/
 	//終了したタイマーを削除
 	timedCalls_.remove_if([](TimedCall* timedCall) {
 		if (timedCall->IsFinished()) {
@@ -92,11 +93,11 @@ void Enemy::Update() {
 	for (TimedCall* timedCall : timedCalls_) {
 		timedCall->Update();
 	}
-	//弾の更新
+	/*//弾の更新
 	for (iterator = bullets_.begin(); iterator != bullets_.end(); iterator++) {
 		(*iterator)->Update();
 	}
-
+	*/
 }
 
 void Enemy::ChangeState(BaseEnemyState* state)
@@ -126,7 +127,8 @@ void Enemy::Fire()
 	bullet_->Initialize(model_, worldTransForm_.translation_, velocity);
 	bullet_->SetPlayer(player_);
 	//bullet_ = newBullet;
-	bullets_.push_back(std::move(bullet_));
+	//bullets_.push_back(std::move(bullet_));
+	gameScene_->AddEnemyBullet(std::move(bullet_));
 }
 
 void Enemy::FireCall() 
@@ -143,9 +145,9 @@ void Enemy::Move(const Vector3& velocity) {
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
 	model_->Draw(worldTransForm_, viewProjection, textureHandle_);
-	for (iterator = bullets_.begin(); iterator != bullets_.end(); iterator++) {
+	 /* for (iterator = bullets_.begin(); iterator != bullets_.end(); iterator++) {
 		(*iterator)->Draw(viewProjection);
-	}
+	}*/
 }
 
 Vector3 Enemy::GetWorldPosition() {
@@ -158,5 +160,5 @@ Vector3 Enemy::GetWorldPosition() {
 
 void Enemy::OnCollision()
 {
-
+	isDead_ = true;
 }

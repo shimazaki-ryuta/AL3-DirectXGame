@@ -12,7 +12,7 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	worldTransForm_.translation_ = position;
 	worldTransForm_.scale_.x = 0.5f;
 	worldTransForm_.scale_.y = 0.5f;
-	worldTransForm_.scale_.z = 3.0f;
+	worldTransForm_.scale_.z = 1.0f;
 
 	velocity_ = velocity;
 	//解法2
