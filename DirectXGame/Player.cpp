@@ -27,10 +27,16 @@ void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos
 
 	uint32_t textureReticle = TextureManager::Load("2DReticle.png");
 
-	sprite2DReticle_ = Sprite::Create(textureReticle, Vector2(0,0), Vector4(1.0f,1.0f,1.0f,1.0f),Vector2(0.5f,0.5f) );
+	sprite2DReticle_ = Sprite::Create(textureReticle, Vector2(float(WinApp::kWindowWidth)/2.0f,float(WinApp::kWindowHeight)/2.0f), Vector4(1.0f,1.0f,1.0f,1.0f),Vector2(0.5f,0.5f) );
 }
 
 void Player::Update(const ViewProjection& viewProjection) {
+
+	//ゲームパッドの状態をえる
+	XINPUT_STATE joyState;
+
+	
+
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
 		if (bullet->IsDead())
@@ -44,7 +50,7 @@ void Player::Update(const ViewProjection& viewProjection) {
 	Vector3 move = {0,0,0};
 	//移動処理
 	const float kCharacterSpeed = 0.2f;
-	if (input_->PushKey(DIK_LEFT))
+	/* if (input_->PushKey(DIK_LEFT))
 	{
 		move.x -= kCharacterSpeed;
 	} else if (input_->PushKey(DIK_RIGHT))
@@ -55,6 +61,10 @@ void Player::Update(const ViewProjection& viewProjection) {
 		move.y += kCharacterSpeed;
 	} else if (input_->PushKey(DIK_DOWN)) {
 		move.y -= kCharacterSpeed;
+	}*/
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		move.x += float(joyState.Gamepad.sThumbLX) / SHRT_MAX * kCharacterSpeed;
+		move.y += float(joyState.Gamepad.sThumbLY) / SHRT_MAX * kCharacterSpeed;
 	}
 
 	worldTransForm_.translation_ +=move;
@@ -121,8 +131,70 @@ void Player::Update(const ViewProjection& viewProjection) {
 
 		positionReticle = Transform(positionReticle, matViewProjectionViewport);
 
-		sprite2DReticle_->SetPosition(Vector2(positionReticle.x,positionReticle.y));
+		//sprite2DReticle_->SetPosition(Vector2(positionReticle.x,positionReticle.y));
 	}
+	//マウスカーソル
+	ScreenToWorld(viewProjection);
+}
+
+void Player::ScreenToWorld(const ViewProjection& viewProjection) 
+{
+	// ゲームパッドの状態をえる
+	XINPUT_STATE joyState;
+
+	Vector2 spritePosition = sprite2DReticle_->GetPosition();
+
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		spritePosition.x += float(joyState.Gamepad.sThumbRX) / SHRT_MAX * 5.0f;
+		spritePosition.y -= float(joyState.Gamepad.sThumbRY) / SHRT_MAX * 5.0f;
+
+		sprite2DReticle_->SetPosition(spritePosition);
+	}
+
+	//POINT mousePosition;
+	//GetCursorPos(&mousePosition);
+
+	//HWND hwnd = WinApp::GetInstance()->GetHwnd();
+	//ScreenToClient(hwnd,&mousePosition);
+
+	//Vector2 clientMousePos = Vector2(float(mousePosition.x), float(mousePosition.y));
+
+	//sprite2DReticle_->SetPosition(clientMousePos);
+	Matrix4x4 matViewport =
+	    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+	Matrix4x4 matVPV = viewProjection.matView * viewProjection.matProjection * matViewport;
+
+	Matrix4x4 matInverseVPV = Inverse(matVPV);
+
+	//スクリーン座標
+	Vector3 posNear =
+	    Vector3(sprite2DReticle_->GetPosition().x, sprite2DReticle_->GetPosition().y, 0);
+	Vector3 posFar =
+	    Vector3(sprite2DReticle_->GetPosition().x, sprite2DReticle_->GetPosition().y, 1);
+
+	//スクリーン座標系からワールド座標形へ
+	posNear = Transform(posNear,matInverseVPV);
+	posFar = Transform(posFar,matInverseVPV);
+
+	//マウスレイの方向
+	Vector3 mouseDirection = posFar - posNear;
+	mouseDirection = Nomalize(mouseDirection);
+
+	const float kDistanceTestObject = 100.0f;
+
+	worldTransform3DReticle_.translation_ = (mouseDirection * kDistanceTestObject) + posNear;
+	worldTransform3DReticle_.UpdateMatrix();
+
+	ImGui::Begin("Player");
+	ImGui::Text(
+	    "2DReticle:(%f,%f)", sprite2DReticle_->GetPosition().x, sprite2DReticle_->GetPosition().y);
+	ImGui::Text("Near:(%+.2f,%+.2f,%+.2f)",posNear.x,posNear.y,posNear.z);
+	ImGui::Text("Far:(%+.2f,%+.2f,%+.2f)", posFar.x, posFar.y, posFar.z);
+	ImGui::Text(
+	    "3DReticle:(%+.2f,%+.2f,%+.2f)", worldTransform3DReticle_.translation_.x,
+	    worldTransform3DReticle_.translation_.y, worldTransform3DReticle_.translation_.z);
+	ImGui::End();
+
 }
 
 void Player::Rotate()
@@ -140,7 +212,15 @@ void Player::Rotate()
 
 void Player::Attack() 
 {
-	if (input_->TriggerKey(DIK_SPACE)) {
+	// ゲームパッドの状態をえる
+	XINPUT_STATE joyState;
+
+	if (!Input::GetInstance()->GetJoystickState(0,joyState))
+	{
+		return;
+	}
+
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
 		//弾があれば解放
 		/* if (bullet_)
 		{

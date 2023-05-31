@@ -51,6 +51,8 @@ public:
 
 	void DrawUI();
 
+	void ScreenToWorld(const ViewProjection& viewProjection);
+
 private:
 	WorldTransform worldTransForm_;
 	Model* model_ = nullptr;
