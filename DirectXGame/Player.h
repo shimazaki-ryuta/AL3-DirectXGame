@@ -4,6 +4,7 @@
 #include "ViewProjection.h"
 #include "Input.h"
 #include "PlayerBullet.h"
+#include "Sprite.h"
 
 #include <list>
 
@@ -24,7 +25,7 @@ public:
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update(const ViewProjection& viewProjection);
 	void Rotate();
 
 	/// <summary>
@@ -48,6 +49,8 @@ public:
 	// 衝突時に呼び出されるコールバック関数
 	void OnCollision();
 
+	void DrawUI();
+
 private:
 	WorldTransform worldTransForm_;
 	Model* model_ = nullptr;
@@ -57,4 +60,9 @@ private:
 	PlayerBullet* bullet_ = nullptr;
 
 	std::list<PlayerBullet*> bullets_;
+
+	//3Dレティクル用
+	WorldTransform worldTransform3DReticle_;
+
+	Sprite* sprite2DReticle_ = nullptr;
 };

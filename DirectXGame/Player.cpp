@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <cassert>
 #include <algorithm>
+#include "TextureManager.h"
 #include"MatrixFunction.h"
 #include"VectorFunction.h"
 #include "ImGuiManager.h"
@@ -12,6 +13,7 @@ Player::~Player() {
 	{
 		delete bullet;
 	}
+	delete sprite2DReticle_;
 }
 void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& position) { 
 	assert(model);
@@ -20,10 +22,15 @@ void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos
 	worldTransForm_.translation_ = position;
 	worldTransForm_.Initialize();
 	input_ = Input::GetInstance();
+
+	worldTransform3DReticle_.Initialize();
+
+	uint32_t textureReticle = TextureManager::Load("2DReticle.png");
+
+	sprite2DReticle_ = Sprite::Create(textureReticle, Vector2(0,0), Vector4(1.0f,1.0f,1.0f,1.0f),Vector2(0.5f,0.5f) );
 }
 
-void Player::Update()
-{
+void Player::Update(const ViewProjection& viewProjection) {
 	//デスフラグの立った弾を削除
 	bullets_.remove_if([](PlayerBullet* bullet) {
 		if (bullet->IsDead())
@@ -86,6 +93,36 @@ void Player::Update()
 	ImGui::Begin("Player");
 	ImGui::SliderFloat3("", *slider3, -100.0f,100.0f);
 	ImGui::End();
+
+
+	//3Dレティクル
+	{
+		const float kDistancePlayer3DReticle = 50.0f;
+		
+		Vector3 offset = {0,0,1.0f};
+
+		offset = TransformNormal(offset,worldTransForm_.matWorld_);
+
+		offset = Nomalize(offset) * kDistancePlayer3DReticle;
+
+		worldTransform3DReticle_.translation_ = GetWorldPosition() + offset;
+		worldTransform3DReticle_.UpdateMatrix();
+	}
+	//2Dレティクル
+	{ 
+		Vector3 positionReticle;
+		positionReticle.x = worldTransform3DReticle_.matWorld_.m[3][0];
+		positionReticle.y = worldTransform3DReticle_.matWorld_.m[3][1];
+		positionReticle.z = worldTransform3DReticle_.matWorld_.m[3][2];
+
+		Matrix4x4 matViewport = MakeViewportMatrix(0,0,WinApp::kWindowWidth,WinApp::kWindowHeight,0,1);
+
+		Matrix4x4 matViewProjectionViewport = viewProjection.matView * viewProjection.matProjection * matViewport;
+
+		positionReticle = Transform(positionReticle, matViewProjectionViewport);
+
+		sprite2DReticle_->SetPosition(Vector2(positionReticle.x,positionReticle.y));
+	}
 }
 
 void Player::Rotate()
@@ -115,7 +152,16 @@ void Player::Attack()
 		const float kBulletSpeed = 1.0f;
 		Vector3 velocity(0.0f,0.0f,kBulletSpeed);
 
-		velocity = TransformNormal(velocity, worldTransForm_.matWorld_);
+		Vector3 worldPos3DReticle;
+		worldPos3DReticle.x = worldTransform3DReticle_.matWorld_.m[3][0];
+		worldPos3DReticle.y = worldTransform3DReticle_.matWorld_.m[3][1];
+		worldPos3DReticle.z = worldTransform3DReticle_.matWorld_.m[3][2];
+
+		velocity = worldPos3DReticle - GetWorldPosition();
+		velocity = Nomalize(velocity) * kBulletSpeed;
+
+
+		//velocity = TransformNormal(velocity, worldTransForm_.matWorld_);
 
 		//弾を生成、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
@@ -134,6 +180,13 @@ void Player::Draw(ViewProjection& viewProjection)
 	{
 		bullet->Draw(viewProjection);
 	}
+
+	//model_->Draw(worldTransform3DReticle_,viewProjection);
+}
+
+void Player::DrawUI() 
+{
+	sprite2DReticle_->Draw();
 }
 
 Vector3 Player::GetWorldPosition()

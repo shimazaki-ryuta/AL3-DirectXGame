@@ -405,6 +405,45 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	return matrix;
 }
 
+// 透視投影行列
+Matrix4x4 MakePerspectiveFovMatrix(float fovY, float aspectRatio, float nearClip, float farClip) {
+	Matrix4x4 matrix = MakeIdentity4x4();
+	matrix.m[0][0] = (1.0f / aspectRatio) * 1.0f / (std::tan(fovY / 2.0f));
+	matrix.m[1][1] = 1.0f / (std::tan(fovY / 2.0f));
+	matrix.m[2][2] = farClip / (farClip - nearClip);
+	matrix.m[2][3] = 1.0f;
+	matrix.m[3][2] = (-nearClip * farClip) / (farClip - nearClip);
+	matrix.m[3][3] = 0.0f;
+	return matrix;
+}
+
+// 正射影行列
+Matrix4x4 MakeOrthographicMatrix(float l, float t, float r, float b, float zn, float zf) {
+	Matrix4x4 matrix = MakeIdentity4x4();
+	matrix.m[0][0] = 2.0f / (r - l);
+	matrix.m[1][1] = 2.0f / (t - b);
+	matrix.m[2][2] = 1.0f / (zf - zn);
+	matrix.m[3][0] = (l + r) / (l - r);
+	matrix.m[3][1] = (t + b) / (b - t);
+	matrix.m[3][2] = zn / (zn - zf);
+
+	return matrix;
+}
+
+// ビューポート変換行列
+Matrix4x4
+    MakeViewportMatrix(float left, float top, float width, float height, float minD, float maxD) {
+	Matrix4x4 matrix = MakeIdentity4x4();
+	matrix.m[0][0] = width / 2.0f;
+	matrix.m[1][1] = -height / 2.0f;
+	matrix.m[2][2] = maxD - minD;
+	matrix.m[3][0] = left + width / 2.0f;
+	matrix.m[3][1] = top + height / 2.0f;
+	matrix.m[3][2] = minD;
+
+	return matrix;
+}
+
 Vector3 TransformNormal(const Vector3& v, const Matrix4x4& m)
 {
 	Vector3 transform;
@@ -427,5 +466,6 @@ Matrix4x4 operator+(Matrix4x4 m1, Matrix4x4 m2) { return Add(m1, m2); }
 
 Matrix4x4 operator-(Matrix4x4 m1, Matrix4x4 m2) { return Subtract(m1, m2); }
 Matrix4x4 operator+=(Matrix4x4 m1, Matrix4x4 m2) { return Add(m1, m2); }
+Matrix4x4 operator*(const Matrix4x4& m1, const Matrix4x4& m2) { return Multiply(m1,m2); }
 Matrix4x4 operator-=(Matrix4x4& m1, const Matrix4x4& m2) { return m1 = Subtract(m1, m2); }
 Matrix4x4 operator*=(Matrix4x4& m1, const Matrix4x4& m2) { return m1 = Multiply(m1, m2); }

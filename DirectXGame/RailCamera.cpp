@@ -12,7 +12,7 @@ void RailCamera::Initialize(const Vector3& position, const Vector3& rotation) {
 
 void RailCamera::Update()
 {
-	//worldTransForm_.translation_.z+=0.1f;
+	worldTransForm_.translation_.z+=0.1f;
 	//worldTransForm_.rotation_.y += 0.005f;
 	worldTransForm_.translation_.z = std::clamp(worldTransForm_.translation_.z, -100.0f, 100.0f);
 	ImGui::Begin("Camere");

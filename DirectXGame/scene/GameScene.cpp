@@ -28,6 +28,10 @@ void GameScene::Initialize() {
 	//3Dモデルデータの生成
 	model_ = Model::Create();
 
+	//レティクルのテクスチャ
+	TextureManager::Load("2DReticle.png");
+
+
 	viewProjection_.Initialize();
 
 	debugCamera_ = new DebugCamera(1280,720);
@@ -99,7 +103,7 @@ void GameScene::Update() {
 		return false;
 	});
 
-	player_->Update(); 
+	player_->Update(viewProjection_); 
 	/*
 	if (enemy_)
 	{
@@ -181,6 +185,9 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
+
+	player_->DrawUI();
+
 
 	// スプライト描画後処理
 	Sprite::PostDraw();
