@@ -32,6 +32,8 @@ void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& vel
 	//Fire();
 	//ApproachInitialize();
 	//pFunc = &Enemy::Approach;
+	SetCollisionAttribute(kCollisionAttributeEnemy);
+	SetCollisionMask(~kCollisionAttributeEnemy);
 }
 void Enemy::ApproachInitialize()
 { 

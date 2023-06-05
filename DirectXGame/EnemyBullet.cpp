@@ -22,6 +22,8 @@ void EnemyBullet::Initialize(Model* model, const Vector3& position, const Vector
 	float besage = Length(velocityXZ);
 	worldTransForm_.rotation_.x = std::atan2(-velocity_.y, besage);
 
+	SetCollisionAttribute(kCollisionAttributeEnemy);
+	SetCollisionMask(~kCollisionAttributeEnemy);
 }
 
 void EnemyBullet::Update()

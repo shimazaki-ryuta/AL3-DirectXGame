@@ -11,6 +11,9 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	worldTransForm_.Initialize();
 	//引数で受け取った初期座標をセット
 	worldTransForm_.translation_ = position;
+
+	SetCollisionAttribute(kCollisionAttributePlayer);
+	SetCollisionMask(~kCollisionAttributePlayer);
 }
 
 void PlayerBullet::Update()

@@ -28,6 +28,9 @@ void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos
 	uint32_t textureReticle = TextureManager::Load("2DReticle.png");
 
 	sprite2DReticle_ = Sprite::Create(textureReticle, Vector2(float(WinApp::kWindowWidth)/2.0f,float(WinApp::kWindowHeight)/2.0f), Vector4(1.0f,1.0f,1.0f,1.0f),Vector2(0.5f,0.5f) );
+
+	SetCollisionAttribute(kCollisionAttributePlayer);
+	SetCollisionMask(~kCollisionAttributePlayer);
 }
 
 void Player::Update(const ViewProjection& viewProjection) {
