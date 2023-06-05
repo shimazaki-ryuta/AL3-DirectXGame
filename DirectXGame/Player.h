@@ -1,4 +1,5 @@
 #pragma once
+#include "Collider.h"
 #include "Model.h"
 #include "WorldTransform.h"
 #include "ViewProjection.h"
@@ -8,7 +9,7 @@
 
 #include <list>
 
-class Player {
+class Player : public Collider{
 public:
 	const float Radius=1.0f;
 
@@ -39,7 +40,8 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(ViewProjection&);
 
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
+	inline float GetRadius() override { return Radius; };
 
 	inline void SetParent(const WorldTransform* parent) { worldTransForm_.parent_ = parent; };
 
@@ -47,7 +49,7 @@ public:
 	inline const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
 	// 衝突時に呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision() override;
 
 	void DrawUI();
 

@@ -3,11 +3,12 @@
 #include "WorldTransform.h"
 #include "ViewProjection.h"
 #include "Input.h"
+#include "Collider.h"
 
 ///<summary>
 ///自キャラの弾
 ///</summary>
-class PlayerBullet {
+class PlayerBullet : public Collider {
 public:
 
 	const float Radius = 1.0f;
@@ -30,9 +31,10 @@ public:
 
 	inline bool IsDead() const { return isDead_; };
 
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
+	inline float GetRadius() override { return Radius; };
 	// 衝突時に呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision() override;
 
 private:
 	WorldTransform worldTransForm_;

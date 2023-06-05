@@ -6,6 +6,7 @@
 #include "EnemyBullet.h"
 #include "EnemyState.h"
 #include <list>
+#include "Collider.h"
 
 #include "TimedCall.h"
 
@@ -21,7 +22,7 @@ class GameScene;
 ///< summary>
 /// 敵
 ///</summary>
-class Enemy {
+class Enemy : public Collider {
 public:
 	const float Radius = 1.0f;
 	~Enemy();
@@ -71,14 +72,15 @@ public:
 
 	inline void SetPlayer(Player* player) { player_ = player; }
 	inline void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
+	inline float GetRadius() override { return Radius; };
 	//inline Vector3 GetPosition() { return worldTransForm_.translation_; };
 	inline Vector3 GetApproachVelocity() { return approachvelocity_; };
 	inline Vector3 GetLeaveVelocity() { return leavevelocity_; };
 	inline std::list<TimedCall*>& GetFireCalls() { return timedCalls_; };
 
 	//衝突時に呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision() override;
 
 	inline bool IsDead() const { return isDead_; };
 	// 弾リストを取得

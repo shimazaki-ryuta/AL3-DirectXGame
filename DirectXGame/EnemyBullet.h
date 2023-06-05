@@ -1,13 +1,13 @@
 #pragma once
 #include "Model.h"
 #include "WorldTransform.h"
-
+#include "Collider.h"
 class Player;
 
 ///< summary>
 /// 敵の弾
 ///</summary>
-class EnemyBullet {
+class EnemyBullet : public Collider {
 public:
 	const float Radius = 1.0f;
 	const float kSpeed = 1.0f;
@@ -28,10 +28,11 @@ public:
 	inline bool IsDead() const { return isDead_; };
 
 
-	Vector3 GetWorldPosition();
+	Vector3 GetWorldPosition() override;
+	inline float GetRadius() override { return Radius; };
 
 	// 衝突時に呼び出されるコールバック関数
-	void OnCollision();
+	void OnCollision() override;
 
 	inline void SetPlayer(Player* player) { player_ = player; };
 

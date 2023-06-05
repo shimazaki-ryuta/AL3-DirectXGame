@@ -17,6 +17,8 @@
 #include "Skydome.h"
 #include "RailCamera.h"
 
+#include "Collider.h"
+
 /// <summary>
 /// ゲームシーン
 /// </summary>
@@ -72,6 +74,9 @@ public: // メンバ関数
 	/// </summary>
 	void UpdateEnemyPopCommands();
 
+	
+private:
+	void CheckCollisionPair(Collider* colliderA,Collider* colliderB);
 
 
 
