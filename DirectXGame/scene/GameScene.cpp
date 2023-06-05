@@ -14,6 +14,7 @@ GameScene::~GameScene() {
 	//delete enemy_;
 	delete modelSkydome_;
 	delete railCamera_;
+	delete collisionManager_;
 }
 
 void GameScene::Initialize() {
@@ -65,6 +66,8 @@ void GameScene::Initialize() {
 
 	//親子関係
 	player_->SetParent(&railCamera_->GetWorldTransform());
+
+	collisionManager_ = new CollisionManager();
 }
 
 void GameScene::Update() {
@@ -125,7 +128,8 @@ void GameScene::Update() {
 		(*iterator)->Update();
 	}
 
-	CheckAllCollisions();
+	//CheckAllCollisions();
+	UseCollisionManager();
 
 	skydome_->Update();
 
@@ -193,6 +197,27 @@ void GameScene::Draw() {
 	Sprite::PostDraw();
 
 #pragma endregion
+}
+
+void GameScene::UseCollisionManager()
+{
+	collisionManager_->ClearList();
+
+	collisionManager_->PushCollider(player_);
+	for (std::list<std::unique_ptr<Enemy>>::iterator enemy = enemys_.begin();
+	     enemy != enemys_.end(); enemy++) {
+		collisionManager_->PushCollider(enemy->get());
+	}
+	for (PlayerBullet* playerBullet : player_->GetBullets()) {
+		collisionManager_->PushCollider(playerBullet);
+	}
+	for (std::list<std::unique_ptr<EnemyBullet>>::iterator enemyBullet = enemyBullets_.begin();
+	     enemyBullet != enemyBullets_.end(); enemyBullet++) {
+		collisionManager_->PushCollider(enemyBullet->get());
+	}
+
+	collisionManager_->CheckAllCollisions();
+
 }
 
 void GameScene::CheckAllCollisions() {

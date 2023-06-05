@@ -18,6 +18,7 @@
 #include "RailCamera.h"
 
 #include "Collider.h"
+#include "CollisionManager.h"
 
 /// <summary>
 /// ゲームシーン
@@ -74,6 +75,11 @@ public: // メンバ関数
 	/// </summary>
 	void UpdateEnemyPopCommands();
 
+	/// <summary>
+	/// 衝突マネージャの利用
+	/// </summary>
+	void UseCollisionManager();
+
 	
 private:
 	void CheckCollisionPair(Collider* colliderA,Collider* colliderB);
@@ -119,6 +125,8 @@ private: // メンバ変数
 	bool isWait_ = false;
 	int32_t waitTime_;
 
+	//衝突マネージャ
+	CollisionManager* collisionManager_ = nullptr;
 
 
 	/// <summary>
