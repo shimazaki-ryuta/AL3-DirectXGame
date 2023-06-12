@@ -1,6 +1,7 @@
 #pragma once
 
 #include <sstream>
+#include <vector>
 
 #include "Audio.h"
 #include "DirectXCommon.h"
@@ -127,6 +128,9 @@ private: // メンバ変数
 
 	//衝突マネージャ
 	CollisionManager* collisionManager_ = nullptr;
+
+	std::vector<Vector3> controlPoints_;
+	
 
 
 	/// <summary>

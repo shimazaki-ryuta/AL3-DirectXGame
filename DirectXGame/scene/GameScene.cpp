@@ -4,6 +4,8 @@
 #include <cassert>
 #include <list>
 #include <fstream>
+#include "PrimitiveDrawer.h"
+#include "Curve.h"
 
 GameScene::GameScene() {}
 
@@ -68,6 +70,16 @@ void GameScene::Initialize() {
 	player_->SetParent(&railCamera_->GetWorldTransform());
 
 	collisionManager_ = new CollisionManager();
+
+	
+	controlPoints_ = {
+	    {0,  0,  0},
+        {10, 10, 0},
+        {10, 15, 0},
+        {20, 15, 0},
+        {20, 0,  0},
+        {30, 0,  0},
+	};
 }
 
 void GameScene::Update() {
@@ -176,7 +188,9 @@ void GameScene::Draw() {
 		(*iterator)->Draw(viewProjection_);
 	}
 
+
 	skydome_->Draw(viewProjection_);
+	DrawCurve(controlPoints_, viewProjection_);
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
