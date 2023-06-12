@@ -31,7 +31,7 @@ Vector3 CatmullRomComplement(std::vector<Vector3> controlPoints,float t)
 void DrawCurve(std::vector<Vector3> controlPoints, ViewProjection& viewProjection)
 {
 	std::vector<Vector3> pointsDrawing;
-	const size_t segmentCount = 100;
+	const size_t segmentCount = 200;
 	for (size_t i=0; i<segmentCount+1;i++)
 	{
 		float t = 1.0f / segmentCount * i;
