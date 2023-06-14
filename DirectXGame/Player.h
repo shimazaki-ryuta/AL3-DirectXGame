@@ -42,7 +42,7 @@ public:
 
 	Vector3 GetWorldPosition() override;
 	inline float GetRadius() override { return Radius; };
-
+	inline const WorldTransform& GetWorldTransform() { return worldTransForm_; };
 	inline void SetParent(const WorldTransform* parent) { worldTransForm_.parent_ = parent; };
 
 	//弾リストを取得

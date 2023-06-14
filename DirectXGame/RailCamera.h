@@ -18,6 +18,7 @@ public:
 	inline const ViewProjection& GetViewProjection() { return viewProjection_; };
 
 	inline void SetControlPoints(std::vector<Vector3> controlPoints) {controlPoints_ = controlPoints;};
+	inline void SetParent(const WorldTransform* parent) { worldTransForm_.parent_ = parent; };
 
 private:
 	WorldTransform worldTransForm_;

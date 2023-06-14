@@ -64,22 +64,24 @@ void GameScene::Initialize() {
 
 	controlPoints_ = {
 	    {0,  0,  0},
-        {10, 10, 20},
-        {-10, 15, 40},
-        {5, 20, 60},
-        {10, 20,  80},
-        {0, 20,  100},
-        {0,   0, 110},
-        {0,   -20, 120},
-        {0,   0, 130},
+        {0, 0, 20},
+        {0, 0, 40},
+        {0, 0, 60},
+        {0, 0,  80},
+        {0, 0,  100},
+        {0, 0, 110},
+        {0, 0, 120},
+        {0,  0, 130},
 	};
 
 	//レールカメラ
 	railCamera_ = new RailCamera();
-	railCamera_->Initialize(Vector3{0.0f, 0.0f, -10.0f}, Vector3{0.0f, 0.0f, 0.0f});
+	railCamera_->Initialize(Vector3{0.0f, 0.0f, 0.0f}, Vector3{0.0f, 0.0f, 0.0f});
 	railCamera_->SetControlPoints(controlPoints_);
 	//親子関係
-	player_->SetParent(&railCamera_->GetWorldTransform());
+	//player_->SetParent(&railCamera_->GetWorldTransform());
+
+	railCamera_->SetParent(&player_->GetWorldTransform());
 
 	collisionManager_ = new CollisionManager();
 

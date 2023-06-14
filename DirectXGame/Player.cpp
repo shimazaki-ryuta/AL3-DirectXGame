@@ -5,7 +5,7 @@
 #include"MatrixFunction.h"
 #include"VectorFunction.h"
 #include "ImGuiManager.h"
-
+#include <numbers>
 Player::~Player() {
 	// Bulletの解放
 	// delete bullet_;
@@ -50,6 +50,10 @@ void Player::Update(const ViewProjection& viewProjection) {
 		return false;
 	});
 
+	// 旋回処理
+	Rotate();
+
+
 	Vector3 move = {0,0,0};
 	//移動処理
 	const float kCharacterSpeed = 0.2f;
@@ -67,21 +71,28 @@ void Player::Update(const ViewProjection& viewProjection) {
 	}*/
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
 		move.x += float(joyState.Gamepad.sThumbLX) / SHRT_MAX * kCharacterSpeed;
-		move.y += float(joyState.Gamepad.sThumbLY) / SHRT_MAX * kCharacterSpeed;
+		move.z += float(joyState.Gamepad.sThumbLY) / SHRT_MAX * kCharacterSpeed;
 	}
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER)
+	{
+		move.y += kCharacterSpeed;
+	}
+	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_LEFT_SHOULDER)
+	{
+		move.y -= kCharacterSpeed;
+	}
+	Vector3 xMasked{0.0f, worldTransForm_.rotation_.y, worldTransForm_.rotation_.z};
+	worldTransForm_.translation_ += Transform(move, MakeRotateMatrix(xMasked));
 
-	worldTransForm_.translation_ +=move;
-
-	const float kMoveLimitX = 32.0f;
-	const float kMoveLimitY = 18.0f;
-
+	//const float kMoveLimitX = 32.0f;
+	//const float kMoveLimitY = 18.0f;
+	/*
 	worldTransForm_.translation_.x =
 	    std::clamp(worldTransForm_.translation_.x, -kMoveLimitX, kMoveLimitX);
 	worldTransForm_.translation_.y =
 	    std::clamp(worldTransForm_.translation_.y, -kMoveLimitY, kMoveLimitY);
-	//旋回処理
-	Rotate();
-
+	*/
+	
 
 	//行列更新
 	//worldTransForm_.matWorld_ =
@@ -148,10 +159,10 @@ void Player::ScreenToWorld(const ViewProjection& viewProjection)
 	Vector2 spritePosition = sprite2DReticle_->GetPosition();
 
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		spritePosition.x += float(joyState.Gamepad.sThumbRX) / SHRT_MAX * 5.0f;
-		spritePosition.y -= float(joyState.Gamepad.sThumbRY) / SHRT_MAX * 5.0f;
+		//spritePosition.x += float(joyState.Gamepad.sThumbRX) / SHRT_MAX * 5.0f;
+		//spritePosition.y -= float(joyState.Gamepad.sThumbRY) / SHRT_MAX * 5.0f;
 
-		sprite2DReticle_->SetPosition(spritePosition);
+		//sprite2DReticle_->SetPosition(spritePosition);
 	}
 
 	//POINT mousePosition;
@@ -202,15 +213,24 @@ void Player::ScreenToWorld(const ViewProjection& viewProjection)
 
 void Player::Rotate()
 {
+	// ゲームパッドの状態をえる
+	XINPUT_STATE joyState;
+
 	const float kRotSpeed = 0.02f;
-	if (input_->PushKey(DIK_A))
+	/* if (input_->PushKey(DIK_A))
 	{
 		worldTransForm_.rotation_.y -= kRotSpeed;
 	}
 	else if (input_->PushKey(DIK_D))
 	{
 		worldTransForm_.rotation_.y += kRotSpeed;
+	}*/
+	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
+		worldTransForm_.rotation_.y += float(joyState.Gamepad.sThumbRX) / SHRT_MAX * kRotSpeed;
+		worldTransForm_.rotation_.x -= float(joyState.Gamepad.sThumbRY) / SHRT_MAX * kRotSpeed;
+
 	}
+	worldTransForm_.rotation_.x = std::clamp(worldTransForm_.rotation_.x,-float(std::numbers::pi)/2.0f,float(std::numbers::pi)/2.0f);
 }
 
 void Player::Attack() 
@@ -223,7 +243,7 @@ void Player::Attack()
 		return;
 	}
 
-	if (joyState.Gamepad.wButtons & XINPUT_GAMEPAD_RIGHT_SHOULDER) {
+	if (joyState.Gamepad.bRightTrigger>= 250) {
 		//弾があれば解放
 		/* if (bullet_)
 		{
@@ -248,7 +268,7 @@ void Player::Attack()
 
 		//弾を生成、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, GetWorldPosition(), velocity);
+		newBullet->Initialize(model_, GetWorldPosition()+velocity*3.0f, velocity);
 
 		//bullet_ = newBullet;
 		bullets_.push_back(newBullet);

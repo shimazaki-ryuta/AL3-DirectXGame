@@ -16,6 +16,7 @@ void RailCamera::Initialize(const Vector3& position, const Vector3& rotation) {
 
 void RailCamera::Update()
 {
+	/*
 	Vector3 eye, target;
 
 	eye = CatmullRomComplement(controlPoints_, t);
@@ -31,7 +32,7 @@ void RailCamera::Update()
 	Vector3 rectXZ{foward.x, 0.0f, foward.z};
 	float besage = Length(rectXZ);
 	worldTransForm_.rotation_.x = std::atan2(-foward.y, besage);
-
+	*/
 	
 	ImGui::Begin("Camere");
 	ImGui::SliderFloat3("Translation", &worldTransForm_.translation_.x, -100.0f, 100.0f);
