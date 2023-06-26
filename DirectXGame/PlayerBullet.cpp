@@ -30,7 +30,7 @@ void PlayerBullet::Update()
 
 		float speed = 0.2f;
 
-		velocity_ = Slerp(velocity_, toEnemy, 0.1f) * speed;
+		velocity_ = Slerp(velocity_, toEnemy, 0.05f) * speed;
 
 	}
 

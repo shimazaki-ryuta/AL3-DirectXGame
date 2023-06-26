@@ -135,7 +135,7 @@ void Enemy::Fire()
 
 void Enemy::FireCall() 
 { 
-	Fire();
+	//Fire();
 
 	 timedCalls_.push_back(
 	    new TimedCall(std::bind(&Enemy::FireCall, this), EnemyBullet::kFireInterval));

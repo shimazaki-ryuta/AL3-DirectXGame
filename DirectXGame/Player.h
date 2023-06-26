@@ -77,8 +77,19 @@ private:
 	//ロックオン
 	bool isLockon = false;
 
+	uint32_t textureReticle_;
+
 	//Enemy* enemy_ = nullptr;
 	std::weak_ptr<Enemy> enemy_;
+
+	struct Target
+	{
+		std::weak_ptr<Enemy> enemy;
+		std::unique_ptr<Sprite> cursor_;
+	};
+
+	std::list<Target*> target_;
+
 
 	GameScene* gameScene_;
 };

@@ -5,6 +5,7 @@
 #include"MatrixFunction.h"
 #include"VectorFunction.h"
 #include "ImGuiManager.h"
+#include <numbers>
 
 Player::~Player() {
 	// Bulletの解放
@@ -25,9 +26,9 @@ void Player::Initialize(Model* model, uint32_t textureHandle, const Vector3& pos
 
 	worldTransform3DReticle_.Initialize();
 
-	uint32_t textureReticle = TextureManager::Load("2DReticle.png");
+	textureReticle_ = TextureManager::Load("2DReticle.png");
 
-	sprite2DReticle_ = Sprite::Create(textureReticle, Vector2(float(WinApp::kWindowWidth)/2.0f,float(WinApp::kWindowHeight)/2.0f), Vector4(1.0f,1.0f,1.0f,1.0f),Vector2(0.5f,0.5f) );
+	sprite2DReticle_ = Sprite::Create(textureReticle_, Vector2(float(WinApp::kWindowWidth)/2.0f,float(WinApp::kWindowHeight)/2.0f), Vector4(1.0f,1.0f,1.0f,1.0f),Vector2(0.5f,0.5f) );
 
 	SetCollisionAttribute(kCollisionAttributePlayer);
 	SetCollisionMask(~kCollisionAttributePlayer);
@@ -45,6 +46,14 @@ void Player::Update(const ViewProjection& viewProjection) {
 		if (bullet->IsDead())
 		{
 			delete bullet;
+			return true;
+		}
+		return false;
+	});
+
+	target_.remove_if([](Target* target) {
+		if (!target->enemy.lock())
+		{
 			return true;
 		}
 		return false;
@@ -142,14 +151,27 @@ void Player::Update(const ViewProjection& viewProjection) {
 
 void Player::LockOn()
 { 
-	if (!isLockon || 1)
-	{
-		enemy_ = gameScene_->GetLockonEnemy(sprite2DReticle_->GetPosition());
-	}
+	enemy_ = gameScene_->GetLockonEnemy(sprite2DReticle_->GetPosition());
 	if (enemy_.lock()) {
-		isLockon = true;
+		for (Target* target : target_)
+		{
+			if (target->enemy.lock() == enemy_.lock()) 
+			{
+				return;
+			}
+		}
+		// isLockon = true;
+		std::unique_ptr<Sprite> sprite;
+		sprite.reset(Sprite::Create(
+		    textureReticle_,
+		    Vector2(float(WinApp::kWindowWidth) / 2.0f, float(WinApp::kWindowHeight) / 2.0f),
+		    Vector4(1.0f, 1.0f, 1.0f, 1.0f), Vector2(0.5f, 0.5f)));
+
+		Target* target = new Target;
+		*target = {enemy_, std::move(sprite)};
+		target_.push_back(target);
 	} else {
-		isLockon = false;
+		//isLockon = false;
 	}
 }
 
@@ -170,7 +192,25 @@ void Player::ScreenToWorld(const ViewProjection& viewProjection)
 	}
 	Vector4 color(1.0f,1.0f,1.0f,1.0f);
 	LockOn();
-
+	for (Target* target : target_)
+	{
+		Vector2 position = target->cursor_->GetPosition();
+		std::shared_ptr<Enemy> enemy = target->enemy.lock();
+		if (enemy) {
+			Matrix4x4 matViewport =
+			    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+			Matrix4x4 matViewProjectionViewport =
+			    viewProjection.matView * viewProjection.matProjection * matViewport;
+			Vector3 enemyPosition3d = enemy->GetWorldPosition();
+			enemyPosition3d = Transform(enemyPosition3d, matViewProjectionViewport);
+			Vector2 screenEnemyPosition(enemyPosition3d.x, enemyPosition3d.y);
+			position = screenEnemyPosition;
+			color = Vector4{1.0f, 0.0f, 0.0f, 1.0f};
+			target->cursor_->SetPosition(position);
+			target->cursor_->SetColor(color);
+		}
+	}
+	/*
 	if (isLockon) {
 		if (std::shared_ptr<Enemy> enemy = enemy_.lock())
 		{
@@ -189,9 +229,10 @@ void Player::ScreenToWorld(const ViewProjection& viewProjection)
 			color = Vector4{1.0f, 0.0f, 0.0f, 1.0f};
 		}
 	}
+	*/
 	sprite2DReticle_->SetPosition(
 	    spritePosition);
-	sprite2DReticle_->SetColor(color);
+	//sprite2DReticle_->SetColor(color);
 	//POINT mousePosition;
 	//GetCursorPos(&mousePosition);
 
@@ -284,12 +325,35 @@ void Player::Attack()
 
 		//velocity = TransformNormal(velocity, worldTransForm_.matWorld_);
 
-		//弾を生成、初期化
-		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, GetWorldPosition(), velocity,enemy_);
+		if (target_.empty())
+		{
+			// 弾を生成、初期化
+			PlayerBullet* newBullet = new PlayerBullet();
+			newBullet->Initialize(model_, GetWorldPosition(), velocity, enemy_);
 
-		//bullet_ = newBullet;
-		bullets_.push_back(newBullet);
+			// bullet_ = newBullet;
+			bullets_.push_back(newBullet);
+		}
+
+		for (Target* target : target_)
+		{
+			if (std::shared_ptr<Enemy> enemy = target->enemy.lock()) 
+			{
+				velocity.z = -1.0f;
+				float theta =
+				    float(rand()) * float(std::numbers::pi)*2.0f / float(RAND_MAX) - float(std::numbers::pi);
+				velocity.x = cosf(theta);
+				velocity.y = sin(theta);
+				velocity = Nomalize(velocity) * 3.0f;
+				// 弾を生成、初期化
+				PlayerBullet* newBullet = new PlayerBullet();
+				newBullet->Initialize(model_, GetWorldPosition(), velocity, target->enemy);
+
+				// bullet_ = newBullet;
+				bullets_.push_back(newBullet);
+			}
+		}
+		target_.clear();
 	}
 }
 
@@ -308,6 +372,10 @@ void Player::Draw(ViewProjection& viewProjection)
 void Player::DrawUI() 
 {
 	sprite2DReticle_->Draw();
+	for (Target* target : target_) 
+	{
+		target->cursor_->Draw();
+	}
 }
 
 Vector3 Player::GetWorldPosition()
