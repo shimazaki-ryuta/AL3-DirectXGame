@@ -1,9 +1,10 @@
 #include "PlayerBullet.h"
 #include "VectorFunction.h"
 #include <assert.h>
+#include "Enemy.h"
 
-
-void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
+void PlayerBullet::Initialize(
+    Model* model, const Vector3& position, const Vector3& velocity,std::weak_ptr<Enemy> enemy) {
 	assert(model);
 	model_ = model;
 	textureHandle_ = TextureManager::Load("black.png");
@@ -11,13 +12,33 @@ void PlayerBullet::Initialize(Model* model, const Vector3& position, const Vecto
 	worldTransForm_.Initialize();
 	//引数で受け取った初期座標をセット
 	worldTransForm_.translation_ = position;
-
+	enemy_ = enemy;
 	SetCollisionAttribute(kCollisionAttributePlayer);
 	SetCollisionMask(~kCollisionAttributePlayer);
+
+	worldTransForm_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
+	Vector3 velocityXZ{velocity_.x, 0.0f, velocity_.z};
+	float besage = Length(velocityXZ);
+	worldTransForm_.rotation_.x = std::atan2(-velocity_.y, besage);
 }
 
 void PlayerBullet::Update()
 {
+	if (std::shared_ptr<Enemy> enemy = enemy_.lock()) 
+	{
+		Vector3 toEnemy = enemy->GetWorldPosition() - worldTransForm_.translation_;
+
+		float speed = 0.2f;
+
+		velocity_ = Slerp(velocity_, toEnemy, 0.1f) * speed;
+
+	}
+
+	worldTransForm_.rotation_.y = std::atan2(velocity_.x, velocity_.z);
+	Vector3 velocityXZ{velocity_.x, 0.0f, velocity_.z};
+	float besage = Length(velocityXZ);
+	worldTransForm_.rotation_.x = std::atan2(-velocity_.y, besage);
+
 	worldTransForm_.translation_ += velocity_;
 
 	//行列を更新

@@ -73,6 +73,7 @@ public:
 	inline void SetPlayer(Player* player) { player_ = player; }
 	inline void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	Vector3 GetWorldPosition() override;
+	inline Matrix4x4 GetWorldTransformMatrix() { return worldTransForm_.matWorld_; };
 	inline float GetRadius() override { return Radius; };
 	//inline Vector3 GetPosition() { return worldTransForm_.translation_; };
 	inline Vector3 GetApproachVelocity() { return approachvelocity_; };

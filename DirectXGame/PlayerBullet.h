@@ -5,6 +5,8 @@
 #include "Input.h"
 #include "Collider.h"
 
+class Enemy;
+
 ///<summary>
 ///自キャラの弾
 ///</summary>
@@ -19,7 +21,7 @@ public:
 	/// <param name="model">モデル</param>]
 	/// <param name="positon">初期座標</param>
 	/// <param name="velocity">速度</param>
-	void Initialize(Model* model, const Vector3& position, const Vector3& velocity);
+	void Initialize(Model* model, const Vector3& position, const Vector3& velocity, std::weak_ptr<Enemy>);
 	/// <summary>
 	/// 更新
 	/// </summary>
@@ -47,4 +49,6 @@ private:
 
 	int32_t deathTimer_ = kLifeTime;
 	bool isDead_ = false;
+
+	std::weak_ptr<Enemy> enemy_;
 };

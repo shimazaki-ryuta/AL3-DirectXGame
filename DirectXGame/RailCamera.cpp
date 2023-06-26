@@ -43,6 +43,6 @@ void RailCamera::Update()
 	// 行列を更新
 	worldTransForm_.UpdateMatrix();
 	viewProjection_.matView = Inverse(worldTransForm_.matWorld_);
-	t += 1.0f / divisionRailCount;
-	t = std::clamp(t,0.0f,1.0f);
+	//t += 1.0f / divisionRailCount;
+	//t = std::clamp(t,0.0f,1.0f);
 }

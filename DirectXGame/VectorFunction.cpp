@@ -2,6 +2,27 @@
 #include <math.h>
 #include <cmath>
 #include <algorithm>
+Vector2 Add(const Vector2& v1, const Vector2& v2) {
+	Vector2 v;
+	v.x = v1.x + v2.x;
+	v.y = v1.y + v2.y;
+	return v;
+}
+
+Vector2 Subtruct(const Vector2& v1, const Vector2& v2) {
+	Vector2 v;
+	v.x = v1.x - v2.x;
+	v.y = v1.y - v2.y;
+	return v;
+}
+
+Vector2 Multiply(float scalar, const Vector2& v) {
+	Vector2 returnV;
+	returnV.x = v.x * scalar;
+	returnV.y = v.y * scalar;
+	return returnV;
+}
+
 Vector3 Add(const Vector3& v1, const Vector3& v2) {
 	Vector3 v;
 	v.x = v1.x + v2.x;
@@ -38,10 +59,13 @@ Vector3 Nomalize(const Vector3& v) {
 	return Multiply((1.0f / length), v);
 }
 
+Vector2 Lerp(const Vector2& v1, const Vector2& v2, float t) { return v1 + Multiply(t, v2 - v1); }
+
 Vector3 Lerp(const Vector3& v1, const Vector3& v2, float t)
 {
 	return v1 + Multiply(t,v2-v1);
 }
+
 
 Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t) 
 {
@@ -59,6 +83,12 @@ Vector3 Slerp(const Vector3& v1, const Vector3& v2, float t)
 	}
 	return s*((std::sinf((1.0f-t)*theta)/std::sinf(theta))*a + (std::sinf(t*theta)/std::sinf(theta))*b);
 }
+
+Vector2 operator+(const Vector2& v1, const Vector2& v2) { return Add(v1, v2); }
+Vector2 operator-(const Vector2& v1, const Vector2& v2) { return Subtruct(v1, v2); }
+Vector2 operator*(float k, const Vector2& v) { return Multiply(k, v); }
+Vector2 operator*(const Vector2& v, float k) { return Multiply(k, v); }
+
 
 Vector3 operator+(const Vector3& v1, const Vector3& v2) { return Add(v1, v2); }
 Vector3 operator-(const Vector3& v1, const Vector3& v2) { return Subtruct(v1, v2); }

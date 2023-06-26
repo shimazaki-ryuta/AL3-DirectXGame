@@ -81,6 +81,7 @@ public: // メンバ関数
 	/// </summary>
 	void UseCollisionManager();
 
+	std::shared_ptr<Enemy> GetLockonEnemy(const Vector2&);
 	
 private:
 	void CheckCollisionPair(Collider* colliderA,Collider* colliderB);
@@ -107,7 +108,7 @@ private: // メンバ変数
 
 	//敵
 	//Enemy* enemy_ = nullptr;
-	std::list<std::unique_ptr<Enemy>> enemys_;
+	std::list<std::shared_ptr<Enemy>> enemys_;
 
 
 	//敵弾

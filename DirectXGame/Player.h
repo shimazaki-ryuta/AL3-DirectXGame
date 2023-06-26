@@ -6,8 +6,9 @@
 #include "Input.h"
 #include "PlayerBullet.h"
 #include "Sprite.h"
-
+#include "Enemy.h"
 #include <list>
+#include "GameScene.h"
 
 class Player : public Collider{
 public:
@@ -44,7 +45,7 @@ public:
 	inline float GetRadius() override { return Radius; };
 
 	inline void SetParent(const WorldTransform* parent) { worldTransForm_.parent_ = parent; };
-
+	inline void SetGameScene(GameScene* gameScene) { gameScene_ = gameScene; }
 	//弾リストを取得
 	inline const std::list<PlayerBullet*>& GetBullets() { return bullets_; }
 
@@ -54,6 +55,8 @@ public:
 	void DrawUI();
 
 	void ScreenToWorld(const ViewProjection& viewProjection);
+
+	void LockOn();
 
 private:
 	WorldTransform worldTransForm_;
@@ -69,4 +72,13 @@ private:
 	WorldTransform worldTransform3DReticle_;
 
 	Sprite* sprite2DReticle_ = nullptr;
+
+
+	//ロックオン
+	bool isLockon = false;
+
+	//Enemy* enemy_ = nullptr;
+	std::weak_ptr<Enemy> enemy_;
+
+	GameScene* gameScene_;
 };

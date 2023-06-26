@@ -20,7 +20,7 @@ Enemy::~Enemy()
 void Enemy::Initialize(Model* model, const Vector3& position, const Vector3& velocity) {
 	assert(model);
 	model_ = model;
-	textureHandle_ = TextureManager::Load("black.png");
+	//textureHandle_ = TextureManager::Load("black.png");
 	worldTransForm_.Initialize();
 	// 引数で受け取った初期座標をセット
 	worldTransForm_.translation_ = position;
@@ -146,7 +146,7 @@ void Enemy::Move(const Vector3& velocity) {
 }
 
 void Enemy::Draw(const ViewProjection& viewProjection) {
-	model_->Draw(worldTransForm_, viewProjection, textureHandle_);
+	model_->Draw(worldTransForm_, viewProjection);
 	 /* for (iterator = bullets_.begin(); iterator != bullets_.end(); iterator++) {
 		(*iterator)->Draw(viewProjection);
 	}*/

@@ -140,6 +140,19 @@ void Player::Update(const ViewProjection& viewProjection) {
 	ScreenToWorld(viewProjection);
 }
 
+void Player::LockOn()
+{ 
+	if (!isLockon || 1)
+	{
+		enemy_ = gameScene_->GetLockonEnemy(sprite2DReticle_->GetPosition());
+	}
+	if (enemy_.lock()) {
+		isLockon = true;
+	} else {
+		isLockon = false;
+	}
+}
+
 void Player::ScreenToWorld(const ViewProjection& viewProjection) 
 {
 	// ゲームパッドの状態をえる
@@ -147,13 +160,38 @@ void Player::ScreenToWorld(const ViewProjection& viewProjection)
 
 	Vector2 spritePosition = sprite2DReticle_->GetPosition();
 
+	Vector2 reticleMove(0,0);
+
 	if (Input::GetInstance()->GetJoystickState(0, joyState)) {
-		spritePosition.x += float(joyState.Gamepad.sThumbRX) / SHRT_MAX * 5.0f;
-		spritePosition.y -= float(joyState.Gamepad.sThumbRY) / SHRT_MAX * 5.0f;
-
-		sprite2DReticle_->SetPosition(spritePosition);
+		reticleMove.x += float(joyState.Gamepad.sThumbRX) / SHRT_MAX * 10.0f;
+		reticleMove.y -= float(joyState.Gamepad.sThumbRY) / SHRT_MAX * 10.0f;
+		spritePosition.x += reticleMove.x;
+		spritePosition.y += reticleMove.y;
 	}
+	Vector4 color(1.0f,1.0f,1.0f,1.0f);
+	LockOn();
 
+	if (isLockon) {
+		if (std::shared_ptr<Enemy> enemy = enemy_.lock())
+		{
+			 Matrix4x4 matViewport =
+			    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+			Matrix4x4 matViewProjectionViewport =
+			    viewProjection.matView * viewProjection.matProjection * matViewport;
+			Vector3 enemyPosition3d = enemy->GetWorldPosition();
+			enemyPosition3d = Transform(enemyPosition3d, matViewProjectionViewport);
+			Vector2 screenEnemyPosition(enemyPosition3d.x, enemyPosition3d.y);
+			// spritePosition = screenEnemyPosition;
+			if (reticleMove.x == 0 && reticleMove.y == 0) {
+				spritePosition = Lerp(spritePosition, screenEnemyPosition, 0.5f);
+			}
+			spritePosition = Lerp(spritePosition, screenEnemyPosition, 0.2f);
+			color = Vector4{1.0f, 0.0f, 0.0f, 1.0f};
+		}
+	}
+	sprite2DReticle_->SetPosition(
+	    spritePosition);
+	sprite2DReticle_->SetColor(color);
 	//POINT mousePosition;
 	//GetCursorPos(&mousePosition);
 
@@ -248,7 +286,7 @@ void Player::Attack()
 
 		//弾を生成、初期化
 		PlayerBullet* newBullet = new PlayerBullet();
-		newBullet->Initialize(model_, GetWorldPosition(), velocity);
+		newBullet->Initialize(model_, GetWorldPosition(), velocity,enemy_);
 
 		//bullet_ = newBullet;
 		bullets_.push_back(newBullet);

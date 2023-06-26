@@ -44,6 +44,7 @@ void GameScene::Initialize() {
 	Vector3 playerPosition(0,0,30.0f);
 	player_ = new Player();
 	player_->Initialize(model_,textureHandle_,playerPosition);
+	player_->SetGameScene(this);
 
 	//敵発生コマンドの読み取り
 	LoadEnemyPopData();
@@ -64,14 +65,14 @@ void GameScene::Initialize() {
 
 	controlPoints_ = {
 	    {0,  0,  0},
-        {10, 10, 20},
-        {-10, 15, 40},
-        {5, 20, 60},
-        {10, 20,  80},
-        {0, 20,  100},
-        {0,   0, 110},
-        {0,   -20, 120},
-        {0,   0, 130},
+        {0, 0, 20},
+        {0, 0, 40},
+        {0, 0, 60},
+        {0, 0,  80},
+        {0, 0,  100},
+        {0, 0, 110},
+        {0, 0, 120},
+        {0, 0, 130},
 	};
 
 	//レールカメラ
@@ -114,7 +115,7 @@ void GameScene::Update() {
 		return false;
 	});
 	// デスフラグの立ったEnemyを削除
-	enemys_.remove_if([](std::unique_ptr<Enemy>& enemy) {
+	enemys_.remove_if([](std::shared_ptr<Enemy>& enemy) {
 		if (enemy->IsDead()) {
 			return true;
 		}
@@ -133,7 +134,7 @@ void GameScene::Update() {
 	UpdateEnemyPopCommands();
 
 	//敵更新
-	for (std::list<std::unique_ptr<Enemy>>::iterator iterator = enemys_.begin();
+	for (std::list<std::shared_ptr<Enemy>>::iterator iterator = enemys_.begin();
 	     iterator != enemys_.end(); iterator++) {
 		(*iterator)->Update();
 	}
@@ -182,7 +183,7 @@ void GameScene::Draw() {
 	/* if (enemy_) {
 		enemy_->Draw(viewProjection_);
 	}*/
-	for (std::list<std::unique_ptr<Enemy>>::iterator iterator = enemys_.begin();
+	for (std::list<std::shared_ptr<Enemy>>::iterator iterator = enemys_.begin();
 	     iterator != enemys_.end(); iterator++) {
 		(*iterator)->Draw(viewProjection_);
 	}
@@ -221,7 +222,7 @@ void GameScene::UseCollisionManager()
 	collisionManager_->ClearList();
 
 	collisionManager_->PushCollider(player_);
-	for (std::list<std::unique_ptr<Enemy>>::iterator enemy = enemys_.begin();
+	for (std::list<std::shared_ptr<Enemy>>::iterator enemy = enemys_.begin();
 	     enemy != enemys_.end(); enemy++) {
 		collisionManager_->PushCollider(enemy->get());
 	}
@@ -242,7 +243,7 @@ void GameScene::CheckAllCollisions() {
 	const std::list<PlayerBullet*>& playerBullets = player_->GetBullets();
 	std::list<Collider*> colliders_;
 	colliders_.push_back(player_);
-	for (std::list<std::unique_ptr<Enemy>>::iterator enemy = enemys_.begin();
+	for (std::list<std::shared_ptr<Enemy>>::iterator enemy = enemys_.begin();
 	     enemy != enemys_.end(); enemy++) {
 		colliders_.push_back(enemy->get());
 	}
@@ -374,4 +375,27 @@ void GameScene::UpdateEnemyPopCommands()
 		}
 	}
 
+}
+
+std::shared_ptr<Enemy> GameScene::GetLockonEnemy(const Vector2& cursorPosition) {
+	const float lockonLength = 30;
+	for (std::list<std::shared_ptr<Enemy>>::iterator iterator = enemys_.begin();
+	     iterator != enemys_.end(); iterator++) {
+		Vector3 enemyPosition3d= (*iterator)->GetWorldPosition();
+		Matrix4x4 matViewport =
+		    MakeViewportMatrix(0, 0, WinApp::kWindowWidth, WinApp::kWindowHeight, 0, 1);
+
+		Matrix4x4 matViewProjectionViewport =
+		    viewProjection_.matView * viewProjection_.matProjection * matViewport;
+
+		enemyPosition3d = Transform(enemyPosition3d, matViewProjectionViewport);
+		Vector2 screenEnemyPosition(enemyPosition3d.x,enemyPosition3d.y);
+		float distance2 = float(std::pow(screenEnemyPosition.x - cursorPosition.x, 2) + std::pow(screenEnemyPosition.y - cursorPosition.y, 2));
+
+		if (distance2 <= float(std::pow(lockonLength, 2)))
+		{
+			return *iterator;
+		}
+	}
+	return nullptr;
 }
