@@ -19,7 +19,7 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("zako_2.png");
 
 	// 3Dモデルデータの生成
-	model_.reset(Model::Create());
+	model_.reset(Model::CreateFromOBJ("Player",true));
 
 	viewProjection_.Initialize();
 
@@ -30,6 +30,16 @@ void GameScene::Initialize() {
 	//player_ = new Player();
 	player_ = std::make_unique<Player>();
 	player_->Initialize(model_.get(), textureHandle_);
+
+	// 天球
+	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
+	skydome_.reset(new Skydome);
+	skydome_->Initialize(modelSkydome_, Vector3(0.0f, 0.0f, 0.0f));
+
+	// 地面
+	modelGround_ = Model::CreateFromOBJ("Ground", true);
+	ground_.reset(new Ground);
+	ground_->Initialize(modelGround_, Vector3(0.0f, 0.0f, 0.0f));
 }
 
 void GameScene::Update() {
@@ -76,8 +86,12 @@ void GameScene::Draw() {
 
 	/// <summary>
 	/// ここに3Dオブジェクトの描画処理を追加できる
-	/// </summary>
+	/// </su->dmmary>
+	skydome_->Draw(viewProjection_);
+	ground_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
+
+
 
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();

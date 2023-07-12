@@ -4,10 +4,12 @@
 
 #include <memory>
 
+
 /// <summary>
-/// 天球
+/// 地面
 /// </summary>
-class Skydome {
+class Ground 
+{
 public:
 	/// <summary>
 	/// 初期化
@@ -22,8 +24,7 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション</param>
 	void Draw(const ViewProjection& viewProjection);
 
-
 private:
 	WorldTransform worldTransform_;
-	std::unique_ptr <Model> model_;
+	std::unique_ptr<Model> model_;
 };
