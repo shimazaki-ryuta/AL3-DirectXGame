@@ -2,7 +2,7 @@
 #include "AxisIndicator.h"
 #include "TextureManager.h"
 #include <cassert>
-
+#include <list>
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
@@ -20,7 +20,21 @@ void GameScene::Initialize() {
 
 	// 3Dモデルデータの生成
 	model_.reset(Model::CreateFromOBJ("Player",true));
+	modelPlayerBody_.reset(Model::CreateFromOBJ("float_Body", true));
+	modelPlayerHead_.reset(Model::CreateFromOBJ("float_Head", true));
+	modelPlayerL_arm_.reset(Model::CreateFromOBJ("float_L_arm", true));
+	modelPlayerR_arm_.reset(Model::CreateFromOBJ("float_R_arm", true));
+	//std::vector<Model*> modelPlayers_;
+	std::vector < HierarchicalAnimation> animationPlayer;
+	WorldTransform worldTransformPlayerBody = {.translation_{0.0f,0.0f,0.0f}};
+	WorldTransform worldTransformPlayerHead = {.translation_{0.0f, 1.2f, 0.0f}};
+	WorldTransform worldTransformPlayerL_arm = {.translation_{-0.5f, 1.5f, 0.0f}};
+	WorldTransform worldTransformPlayerR_arm = {.translation_{0.5f, 1.5f, 0.0f}};
 
+	animationPlayer.push_back({modelPlayerBody_.get(), worldTransformPlayerBody});
+	animationPlayer.push_back({modelPlayerHead_.get(), worldTransformPlayerHead});
+	animationPlayer.push_back({modelPlayerL_arm_.get(), worldTransformPlayerL_arm});
+	animationPlayer.push_back({modelPlayerR_arm_.get(), worldTransformPlayerR_arm});
 	viewProjection_.Initialize();
 
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -29,8 +43,8 @@ void GameScene::Initialize() {
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
 	//player_ = new Player();
 	player_ = std::make_unique<Player>();
-	player_->Initialize(model_.get(), textureHandle_);
-
+	player_->Initialize(animationPlayer, textureHandle_);
+	player_->InitializeFloatingGimmick();
 	// 天球
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_.reset(new Skydome);

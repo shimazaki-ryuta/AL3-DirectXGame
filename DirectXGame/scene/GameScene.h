@@ -60,6 +60,13 @@ private: // メンバ変数
 
 	// 自キャラ
 	std::unique_ptr<Player> player_;
+	std::unique_ptr<Model> modelPlayerBody_;
+	std::unique_ptr<Model> modelPlayerHead_;
+	std::unique_ptr<Model> modelPlayerL_arm_;
+	std::unique_ptr<Model> modelPlayerR_arm_;
+
+
+
 	bool isDebugCameraActive_ = false;
 	DebugCamera* debugCamera_ = nullptr;
 
