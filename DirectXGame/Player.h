@@ -20,8 +20,15 @@ public:
 	/// <param name="viewProjection">ビュープロジェクション（参照渡し）</param>
 	void Draw(ViewProjection&);
 
+	inline WorldTransform* GetWorldTransform() { return &worldTransform_; };
+
+	inline void SetViewProjection(const ViewProjection* viewProjection) {
+		viewProjection_ = viewProjection;
+	};
+
 private:
-	WorldTransform worldTransForm_;
+	WorldTransform worldTransform_;
+	const ViewProjection* viewProjection_ = nullptr;
 	Model* model_ = nullptr;
 	uint32_t textureHandle_ = 0u;
 
