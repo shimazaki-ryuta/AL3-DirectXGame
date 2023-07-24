@@ -4,41 +4,37 @@
 #include "ViewProjection.h"
 #include "WorldTransform.h"
 #include <vector>
+#include "BaseCharacter.h"
 
-struct HierarchicalAnimation {
-	Model* model_;
-	WorldTransform worldTransform_;
-};
-
-class Player {
+class Player : public BaseCharacter {
 public:
 	/// <summary>
 	/// 初期化
 	/// </summary>
-	void Initialize(std::vector<HierarchicalAnimation>, uint32_t);
+	void Initialize(const std::vector<HierarchicalAnimation>& models) override;
 	/// <summary>
 	/// 更新
 	/// </summary>
-	void Update();
+	void Update() override;
 	/// <summary>
 	/// 描画
 	/// </summary>
 	/// <param name="viewProjection">ビュープロジェクション（参照渡し）</param>
-	void Draw(ViewProjection&);
+	void Draw(const ViewProjection& viewProjection) override;
 	void InitializeFloatingGimmick();
 	void UpdateFloatingGimmick();
 
 
 
-
+/*
 	inline WorldTransform* GetWorldTransform() { return &worldTransform_; };
-
+	*/
 	inline void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	};
-
+	
 private:
-	WorldTransform worldTransform_;
+	//WorldTransform worldTransform_;
 	const ViewProjection* viewProjection_ = nullptr;
 	//Model* model_ = nullptr;
 	//Model* modelBody_  = nullptr;
@@ -46,7 +42,7 @@ private:
 	//Model* modelL_arm_ = nullptr;
 	//Model* modelR_arm_ = nullptr;
 	//std::vector<Model*> models_;
-	std::vector <HierarchicalAnimation> models_;
+	//std::vector <HierarchicalAnimation> models_;
 	uint32_t textureHandle_ = 0u;
 
 	float floatingParameter_ = 0.0f;

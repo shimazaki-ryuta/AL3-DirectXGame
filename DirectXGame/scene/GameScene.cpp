@@ -19,17 +19,25 @@ void GameScene::Initialize() {
 	textureHandle_ = TextureManager::Load("zako_2.png");
 
 	// 3Dモデルデータの生成
-	model_.reset(Model::CreateFromOBJ("Player",true));
+	model_.reset(Model::CreateFromOBJ("Player", true));
 	modelPlayerBody_.reset(Model::CreateFromOBJ("float_Body", true));
 	modelPlayerHead_.reset(Model::CreateFromOBJ("float_Head", true));
 	modelPlayerL_arm_.reset(Model::CreateFromOBJ("float_L_arm", true));
 	modelPlayerR_arm_.reset(Model::CreateFromOBJ("float_R_arm", true));
-	//std::vector<Model*> modelPlayers_;
-	std::vector < HierarchicalAnimation> animationPlayer;
-	WorldTransform worldTransformPlayerBody = {.translation_{0.0f,0.0f,0.0f}};
-	WorldTransform worldTransformPlayerHead = {.translation_{0.0f, 1.2f, 0.0f}};
-	WorldTransform worldTransformPlayerL_arm = {.translation_{-0.5f, 1.5f, 0.0f}};
-	WorldTransform worldTransformPlayerR_arm = {.translation_{0.5f, 1.5f, 0.0f}};
+	// std::vector<Model*> modelPlayers_;
+	std::vector<HierarchicalAnimation> animationPlayer;
+	WorldTransform worldTransformPlayerBody = {
+	    .translation_{0.0f, 0.0f, 0.0f}
+    };
+	WorldTransform worldTransformPlayerHead = {
+	    .translation_{0.0f, 1.2f, 0.0f}
+    };
+	WorldTransform worldTransformPlayerL_arm = {
+	    .translation_{-0.5f, 1.5f, 0.0f}
+    };
+	WorldTransform worldTransformPlayerR_arm = {
+	    .translation_{0.5f, 1.5f, 0.0f}
+    };
 
 	animationPlayer.push_back({modelPlayerBody_.get(), worldTransformPlayerBody});
 	animationPlayer.push_back({modelPlayerHead_.get(), worldTransformPlayerHead});
@@ -41,9 +49,9 @@ void GameScene::Initialize() {
 
 	AxisIndicator::GetInstance()->SetVisible(true);
 	AxisIndicator::GetInstance()->SetTargetViewProjection(&viewProjection_);
-	//player_ = new Player();
+	// player_ = new Player();
 	player_ = std::make_unique<Player>();
-	player_->Initialize(animationPlayer, textureHandle_);
+	player_->Initialize(animationPlayer);
 	player_->InitializeFloatingGimmick();
 	// 天球
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
@@ -55,12 +63,24 @@ void GameScene::Initialize() {
 	ground_.reset(new Ground);
 	ground_->Initialize(modelGround_, Vector3(0.0f, 0.0f, 0.0f));
 
-	//カメラ生成
+	// カメラ生成
 	followCamera_ = std::make_unique<FollowCamera>();
 	followCamera_->Initialize();
 	followCamera_->SetTarget(player_->GetWorldTransform());
 
 	player_->SetViewProjection(&followCamera_->GetViewProjection());
+
+	// 敵
+	modelEnemyBody_.reset(Model::CreateFromOBJ("Enemy_Body", true));
+	modelEnemyWheel_.reset(Model::CreateFromOBJ("Enemy_Wheel", true));
+	std::vector<HierarchicalAnimation> animationEnemy;
+	WorldTransform worldTransformEnemyBody = {.translation_{0.0f,0.5f,0.0f}};
+	WorldTransform worldTransformEnemyWheel = {.translation_{0.0f, -0.2f, 0.0f}    };
+	animationEnemy.push_back({modelEnemyBody_.get(), worldTransformEnemyBody});
+	animationEnemy.push_back({modelEnemyWheel_.get(), worldTransformEnemyWheel});
+
+	enemy_ = std::make_unique<Enemy>();
+	enemy_->Initialize(animationEnemy);
 }
 
 void GameScene::Update() {
@@ -71,6 +91,7 @@ void GameScene::Update() {
 	}
 #endif // _DEBUG
 	player_->Update();
+	enemy_->Update();
 	debugCamera_->Update();
 	followCamera_->Update();
 
@@ -115,7 +136,7 @@ void GameScene::Draw() {
 	skydome_->Draw(viewProjection_);
 	ground_->Draw(viewProjection_);
 	player_->Draw(viewProjection_);
-
+	enemy_->Draw(viewProjection_);
 
 
 	// 3Dオブジェクト描画後処理

@@ -5,17 +5,9 @@
 #include <algorithm>
 #include <cassert>
 #include <numbers>
-void Player::Initialize(std::vector<HierarchicalAnimation> model, uint32_t textureHandle) {
+void Player::Initialize(const std::vector<HierarchicalAnimation>& models) {
 	//assert(model);
-	//this->model_ = model;
-	//modelBody_ = model[0];
-	//modelHead_ = model[1];
-	//modelL_arm_ = model[2];
-	//modelR_arm_ = model[3];
-	models_ = model;
-
-	this->textureHandle_ = textureHandle;
-	worldTransform_.Initialize();
+	BaseCharacter::Initialize(models);
 	input_ = Input::GetInstance();
 
 	for (HierarchicalAnimation& model_ : models_) {
@@ -79,7 +71,7 @@ void Player::Update() {
 	}
 }
 
-void Player::Draw(ViewProjection& viewProjection) {
+void Player::Draw(const ViewProjection& viewProjection) {
 	//model_->Draw(worldTransform_, viewProjection);
 	for (HierarchicalAnimation& model : models_)
 	{
