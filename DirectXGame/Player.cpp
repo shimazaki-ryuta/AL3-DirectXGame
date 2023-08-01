@@ -6,7 +6,7 @@
 #include <cassert>
 #include <numbers>
 
-#include "GlovalVariables.h"
+#include "GlobalVariables.h"
 
 static int startFrame = 0;
 static int endFrame = 60;
@@ -15,7 +15,7 @@ static int attackFrame = 20;
 
 
 void Player::Initialize(const std::vector<HierarchicalAnimation>& models) {
-	GlovalVariables* grovalVariables = GlovalVariables::GetInstance();
+	GlobalVariables* grovalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "Player";
 	grovalVariables->CreateGroup(groupName);
 	grovalVariables->SetValue(groupName, "Test",90);

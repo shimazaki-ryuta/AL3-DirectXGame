@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <string>
 #include "Vector3.h"
-class GlovalVariables {
+class GlobalVariables {
 public:
 	struct Item {
 		//項目
@@ -16,7 +16,7 @@ public:
 	};
 
 
-	static GlovalVariables* GetInstance();
+	static GlobalVariables* GetInstance();
 	void CreateGroup(const std::string& groupName);
 
 	void SetValue(const std::string& groupName, const std::string& key, int32_t value);
@@ -25,11 +25,15 @@ public:
 
 	void Update();
 
+
+	void SaveFile(const std::string& groupName);
+
 private:
-	GlovalVariables() = default;
-	~GlovalVariables() = default;
-	GlovalVariables(const GlovalVariables&) = delete;
-	GlovalVariables operator=(const GlovalVariables&) = delete;
+	GlobalVariables() = default;
+	~GlobalVariables() = default;
+	GlobalVariables(const GlobalVariables&) = delete;
+	GlobalVariables operator=(const GlobalVariables&) = delete;
 
 	std::map<std::string, Group> datas_;
+	const std::string kDirectoryPath = "Resources/GlobalVariables/";
 };
