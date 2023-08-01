@@ -6,16 +6,16 @@
 #include "Vector3.h"
 class GlobalVariables {
 public:
-	struct Item {
+	/* struct Item {
 		//項目
 		std::variant<int32_t,float,Vector3> value;
 
-	};
-	//using Item = std::variant<int32_t,float,Vector3>;
-	struct Group {
+	};*/
+	using Item = std::variant<int32_t,float,Vector3>;
+	/* struct Group {
 		std::map<std::string, Item> items;
-	};
-
+	};*/
+	using Group = std::map<std::string, Item>;
 
 	static GlobalVariables* GetInstance();
 	void CreateGroup(const std::string& groupName);

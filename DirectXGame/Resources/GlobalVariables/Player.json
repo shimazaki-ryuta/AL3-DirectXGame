@@ -2,7 +2,7 @@
     "Player": {
         "ArmL Translation": [
             -0.5,
-            1.5,
+            1.100000023841858,
             0.0
         ],
         "ArmR Translation": [
@@ -12,7 +12,7 @@
         ],
         "Head Translation": [
             0.0,
-            0.800000011920929,
+            2.0,
             0.0
         ],
         "Test": 33,
