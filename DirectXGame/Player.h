@@ -5,17 +5,35 @@
 #include "WorldTransform.h"
 #include <vector>
 #include "BaseCharacter.h"
+#include <optional>
 
 class Player : public BaseCharacter {
 public:
+	enum class Behavior { 
+		kRoot,
+		kAttack,
+	};
+
+	enum class AttackBehavior {
+		kPre,
+		kAttack,
+		kEnd,
+	};
+
 	/// <summary>
 	/// 初期化
 	/// </summary>
 	void Initialize(const std::vector<HierarchicalAnimation>& models) override;
+	void BehaviorRootInitialize();
+	void BehaviorAttackInitialize();
+
 	/// <summary>
 	/// 更新
 	/// </summary>
 	void Update() override;
+	void BehaviorRootUpdate();
+	void BehaviorAttackUpdate();
+
 	/// <summary>
 	/// 描画
 	/// </summary>
@@ -32,6 +50,7 @@ public:
 	inline void SetViewProjection(const ViewProjection* viewProjection) {
 		viewProjection_ = viewProjection;
 	};
+	inline void SetWepon(Model* model) { modelWepon_ = model; };
 	
 private:
 	//WorldTransform worldTransform_;
@@ -43,6 +62,9 @@ private:
 	//Model* modelR_arm_ = nullptr;
 	//std::vector<Model*> models_;
 	//std::vector <HierarchicalAnimation> models_;
+	WorldTransform worldTransformWepon_;
+	Model* modelWepon_;
+
 	uint32_t textureHandle_ = 0u;
 
 	float floatingParameter_ = 0.0f;
@@ -50,5 +72,11 @@ private:
 	Input* input_ = nullptr;
 
 	//uint16_t period = 120;
+	Behavior behavior_ = Behavior::kRoot;
+	std::optional<Behavior> behaviorRequest_ = std::nullopt;
 
+	AttackBehavior attackBehavior_ = AttackBehavior::kPre;
+
+	//調整用
+	int frameCount_ = 0;
 };

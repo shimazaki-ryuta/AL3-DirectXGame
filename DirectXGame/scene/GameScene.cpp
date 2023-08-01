@@ -53,6 +53,10 @@ void GameScene::Initialize() {
 	player_ = std::make_unique<Player>();
 	player_->Initialize(animationPlayer);
 	player_->InitializeFloatingGimmick();
+
+	modelWepon_.reset(Model::CreateFromOBJ("hammer", true));
+	player_->SetWepon(modelWepon_.get());
+
 	// 天球
 	modelSkydome_ = Model::CreateFromOBJ("skydome", true);
 	skydome_.reset(new Skydome);

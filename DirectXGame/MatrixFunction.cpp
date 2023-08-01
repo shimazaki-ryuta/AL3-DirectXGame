@@ -49,9 +49,11 @@ Matrix4x4 Subtract(Matrix4x4 m1, Matrix4x4 m2) {
 Matrix4x4 Multiply(Matrix4x4 m1, Matrix4x4 m2) {
 	Matrix4x4 result;
 	int size = ColumnSize(m1);
+#ifdef _DEBUG
 	int m1Column = ColumnSize(m1);
 	int m2Row = RowSize(m2);
 	assert(m1Column == m2Row); //
+#endif                         // _DEBUG
 	for (int row = 0; row < size; row++) {
 		for (int column = 0; column < size; column++) {
 			result.m[row][column] = 0;
