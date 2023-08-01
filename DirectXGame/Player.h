@@ -52,6 +52,8 @@ public:
 	};
 	inline void SetWepon(Model* model) { modelWepon_ = model; };
 	
+	void ApplyGlobalVariables();
+
 private:
 	//WorldTransform worldTransform_;
 	const ViewProjection* viewProjection_ = nullptr;

@@ -45,6 +45,32 @@ void GlobalVariables::SetValue(
 	group.items[key] = newItem;
 }
 
+void GlobalVariables::AddtValue(
+    const std::string& groupName, const std::string& key, int32_t value) {
+	Group& group = datas_[groupName];
+	std::map<std::string, Item>::iterator itItem = group.items.find(key.c_str());
+	if (itItem ==group.items.end())
+	{
+		SetValue(groupName,key,value);
+	}
+}
+void GlobalVariables::AddItem(const std::string& groupName, const std::string& key, float value) {
+	Group& group = datas_[groupName];
+	std::map<std::string, Item>::iterator itItem = group.items.find(key.c_str());
+	if (itItem == group.items.end()) {
+		SetValue(groupName, key, value);
+	}
+}
+void GlobalVariables::AddItem(
+    const std::string& groupName, const std::string& key, const Vector3& value) {
+	Group& group = datas_[groupName];
+	std::map<std::string, Item>::iterator itItem = group.items.find(key.c_str());
+	if (itItem == group.items.end()) {
+		SetValue(groupName, key, value);
+	}
+}
+
+
 void GlobalVariables::Update() {
 	if (!ImGui::Begin("Groval Variables", nullptr, ImGuiWindowFlags_MenuBar))
 	{
@@ -147,4 +173,102 @@ void GlobalVariables::SaveFile(const std::string& groupName)
 
 	ofs << std::setw(4) << root << std::endl;
 	ofs.close();
+}
+
+void GlobalVariables::LoadFiles() {
+	std::filesystem::path dir(kDirectoryPath);
+	if (!std::filesystem::exists(kDirectoryPath)) {
+		return;
+	}
+
+	std::filesystem::directory_iterator dir_it(kDirectoryPath);
+	for (const std::filesystem::directory_entry& entry : dir_it)
+	{
+		const std::filesystem::path& filePath = entry.path();
+
+		//拡張子取得
+		std::string extension = filePath.extension().string();
+
+		//.json以外はスキップ
+		if (extension.compare(".json") != 0)
+		{
+			continue;
+		}
+
+		LoadFile(filePath.stem().string());
+	}
+}
+
+void GlobalVariables::LoadFile(const std::string& groupName) {
+	std::string filePath = kDirectoryPath + groupName + ".json";
+
+	std::ifstream ifs;
+
+	ifs.open(filePath);
+
+	if (ifs.fail()) {
+		std::string message = "Failed open data file for read";
+		MessageBoxA(nullptr, message.c_str(), "GrobalVariables", 0);
+		assert(0);
+		return;
+	}
+
+	json root;
+	ifs >> root;
+	ifs.close();
+
+	json::iterator itGroup = root.find(groupName);
+
+	//未登録チェック
+	assert(itGroup != root.end());
+
+	for (json::iterator itItem = itGroup->begin();itItem != itGroup->end();++itItem)
+	{
+		const std::string& itemName = itItem.key();
+
+		if (itItem->is_number_integer())
+		{
+			int32_t value = itItem->get<int32_t>();
+			SetValue(groupName,itemName,value);
+		}
+		else if (itItem->is_number_float()) {
+			double value = itItem->get<double>();
+			SetValue(groupName, itemName, static_cast<float>(value));
+		} 
+		else if (itItem->is_array() && itItem->size() == 3) {
+			Vector3 value = {itItem->at(0), itItem->at(1), itItem->at(2)};
+			SetValue(groupName, itemName,value);
+		}
+	}
+}
+
+int32_t GlobalVariables::GetIntValue(const std::string& groupName, const std::string& key)  {
+	std::map<std::string, Group>::iterator itGroup = datas_.find(groupName);
+	// 未登録チェック
+	assert(itGroup != datas_.end());
+
+	Group& group = datas_[groupName];
+	std::map<std::string, Item>::iterator itItem = group.items.find(key.c_str());
+	assert(itItem != group.items.end());
+	return std::get<int32_t>(itItem->second.value);
+}
+float GlobalVariables::GetFloatValue(const std::string& groupName, const std::string& key)  {
+	std::map<std::string, Group>::iterator itGroup = datas_.find(groupName);
+	// 未登録チェック
+	assert(itGroup != datas_.end());
+
+	Group& group = datas_[groupName];
+	std::map<std::string, Item>::iterator itItem = group.items.find(key.c_str());
+	assert(itItem != group.items.end());
+	return std::get<float>(itItem->second.value);
+}
+Vector3 GlobalVariables::GetVector3Value(const std::string& groupName, const std::string& key)  {
+	std::map<std::string, Group>::iterator itGroup = datas_.find(groupName);
+	// 未登録チェック
+	assert(itGroup != datas_.end());
+
+	Group& group = datas_[groupName];
+	std::map<std::string, Item>::iterator itItem = group.items.find(key.c_str());
+	assert(itItem != group.items.end());
+	return std::get<Vector3>(itItem->second.value);
 }

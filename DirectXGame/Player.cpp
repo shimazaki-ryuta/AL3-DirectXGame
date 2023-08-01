@@ -18,9 +18,9 @@ void Player::Initialize(const std::vector<HierarchicalAnimation>& models) {
 	GlobalVariables* grovalVariables = GlobalVariables::GetInstance();
 	const char* groupName = "Player";
 	grovalVariables->CreateGroup(groupName);
-	grovalVariables->SetValue(groupName, "Test",90);
-	grovalVariables->SetValue(groupName, "Test2", 5.0f);
-	grovalVariables->SetValue(groupName, "Test3", Vector3{1.0f,2.0f,3.0f});
+	//grovalVariables->AddItem(groupName, "Test",90);
+	//grovalVariables->AddItem(groupName, "Test2", 5.0f);
+	//grovalVariables->AddItem(groupName, "Test3", Vector3{1.0f,2.0f,3.0f});
 
 
 	//assert(model);
@@ -39,6 +39,13 @@ void Player::Initialize(const std::vector<HierarchicalAnimation>& models) {
 	}
 	worldTransformWepon_.Initialize();
 	worldTransformWepon_.parent_ = &worldTransform_;
+
+	grovalVariables->AddItem(groupName, "Head Translation", models_[1].worldTransform_.translation_);
+	grovalVariables->AddItem(
+	    groupName, "ArmL Translation", models_[2].worldTransform_.translation_);
+	grovalVariables->AddItem(
+	    groupName, "ArmR Translation", models_[3].worldTransform_.translation_);
+	
 }
 
 void Player::BehaviorRootInitialize() {
@@ -83,6 +90,7 @@ void Player::BehaviorAttackInitialize() {
 }
 
 void Player::Update() {
+	ApplyGlobalVariables();
 	if (behaviorRequest_) {
 		behavior_ = behaviorRequest_.value();
 		frameCount_ = 0;
@@ -274,4 +282,15 @@ void Player::UpdateFloatingGimmick()
 	ImGui::End();
 #endif // _DEBUG
 */
+}
+
+void Player::ApplyGlobalVariables()
+{
+	GlobalVariables* globalVariables = GlobalVariables::GetInstance();
+	const char* groupName = "Player";
+	models_[1].worldTransform_.translation_ = globalVariables->GetVector3Value(groupName, "Head Translation");
+	models_[2].worldTransform_.translation_ =
+	    globalVariables->GetVector3Value(groupName, "ArmL Translation");
+	models_[3].worldTransform_.translation_ =
+	    globalVariables->GetVector3Value(groupName, "ArmR Translation");
 }
