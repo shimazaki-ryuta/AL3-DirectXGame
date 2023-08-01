@@ -6,6 +6,8 @@
 #include <cassert>
 #include <numbers>
 
+#include "GlovalVariables.h"
+
 static int startFrame = 0;
 static int endFrame = 60;
 static int rigidityFrame = 30;
@@ -13,6 +15,14 @@ static int attackFrame = 20;
 
 
 void Player::Initialize(const std::vector<HierarchicalAnimation>& models) {
+	GlovalVariables* grovalVariables = GlovalVariables::GetInstance();
+	const char* groupName = "Player";
+	grovalVariables->CreateGroup(groupName);
+	grovalVariables->SetValue(groupName, "Test",90);
+	grovalVariables->SetValue(groupName, "Test2", 5.0f);
+	grovalVariables->SetValue(groupName, "Test3", Vector3{1.0f,2.0f,3.0f});
+
+
 	//assert(model);
 	BaseCharacter::Initialize(models);
 	input_ = Input::GetInstance();
@@ -105,6 +115,7 @@ void Player::Update() {
 	float* slider3[3] = {
 	    &worldTransform_.translation_.x, &worldTransform_.translation_.y,
 	    &worldTransform_.translation_.z};
+	/*
 #ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::SliderFloat3("", *slider3, -100.0f, 100.0f);
@@ -113,6 +124,7 @@ void Player::Update() {
 	ImGui::SliderInt("End", &endFrame, 1, 240);
 	ImGui::End();
 #endif // _DEBUG
+*/
 	for (HierarchicalAnimation& model : models_) {
 		model.worldTransform_.UpdateMatrix();
 	}
@@ -249,7 +261,7 @@ void Player::UpdateFloatingGimmick()
 	models_[2].worldTransform_.rotation_.x = std::cos(floatingParameter_) * floatingAmplitude;
 	models_[3].worldTransform_.rotation_.x = std::cos(floatingParameter_) * floatingAmplitude;
 
-
+	/*
 	#ifdef _DEBUG
 	ImGui::Begin("Player");
 	ImGui::SliderFloat3("Head Transform", &models_[1].worldTransform_.translation_.x,-10.0f,10.0f);
@@ -261,4 +273,5 @@ void Player::UpdateFloatingGimmick()
 	ImGui::SliderFloat("Ampritude", &floatingAmplitude,0.0f,10.0f);
 	ImGui::End();
 #endif // _DEBUG
+*/
 }
